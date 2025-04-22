@@ -1,0 +1,145 @@
+syntax = "proto3";
+
+option csharp_namespace = "VehicleService.API";
+
+package vehicle;
+
+service VehicleService {
+  // Get vehicle by ID
+  rpc GetVehicle (GetVehicleRequest) returns (VehicleResponse);
+  
+  // List vehicles with optional filtering
+  rpc ListVehicles (ListVehiclesRequest) returns (ListVehiclesResponse);
+  
+  // Create a new vehicle
+  rpc CreateVehicle (CreateVehicleRequest) returns (VehicleResponse);
+  
+  // Update vehicle details
+  rpc UpdateVehicle (UpdateVehicleRequest) returns (VehicleResponse);
+  
+  // Delete a vehicle
+  rpc DeleteVehicle (DeleteVehicleRequest) returns (DeleteVehicleResponse);
+  
+  // Assign vehicle to a driver
+  rpc AssignVehicleToDriver (AssignVehicleRequest) returns (VehicleResponse);
+  
+  // Stream vehicle location updates
+  rpc StreamVehicleLocation (VehicleLocationStreamRequest) returns (stream VehicleLocationResponse);
+}
+
+message GetVehicleRequest {
+  string vehicle_id = 1;
+}
+
+message ListVehiclesRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+  string filter = 3;
+  VehicleStatus status = 4;
+}
+
+message ListVehiclesResponse {
+  repeated VehicleResponse vehicles = 1;
+  int32 total_count = 2;
+  int32 page_count = 3;
+}
+
+message CreateVehicleRequest {
+  string registration_number = 1;
+  string model = 2;
+  string manufacturer = 3;
+  int32 year = 4;
+  string vin = 5;
+  VehicleType type = 6;
+  float fuel_capacity = 7;
+  float current_fuel_level = 8;
+  float odometer_reading = 9;
+}
+
+message UpdateVehicleRequest {
+  string vehicle_id = 1;
+  string registration_number = 2;
+  string model = 3;
+  string manufacturer = 4;
+  int32 year = 5;
+  string vin = 6;
+  VehicleType type = 7;
+  float fuel_capacity = 8;
+  float current_fuel_level = 9;
+  float odometer_reading = 10;
+  VehicleStatus status = 11;
+}
+
+message DeleteVehicleRequest {
+  string vehicle_id = 1;
+}
+
+message DeleteVehicleResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AssignVehicleRequest {
+  string vehicle_id = 1;
+  string driver_id = 2;
+  int64 assignment_start_timestamp = 3;
+  int64 assignment_end_timestamp = 4;
+}
+
+message VehicleLocationStreamRequest {
+  string vehicle_id = 1;
+}
+
+message VehicleLocationResponse {
+  string vehicle_id = 1;
+  double latitude = 2;
+  double longitude = 3;
+  double speed = 4;
+  double heading = 5;
+  int64 timestamp = 6;
+}
+
+message VehicleResponse {
+  string id = 1;
+  string registration_number = 2;
+  string model = 3;
+  string manufacturer = 4;
+  int32 year = 5;
+  string vin = 6;
+  VehicleType type = 7;
+  float fuel_capacity = 8;
+  float current_fuel_level = 9;
+  float odometer_reading = 10;
+  VehicleStatus status = 11;
+  string assigned_driver_id = 12;
+  VehicleLocation last_known_location = 13;
+  int64 created_at = 14;
+  int64 updated_at = 15;
+}
+
+message VehicleLocation {
+  double latitude = 1;
+  double longitude = 2;
+  double speed = 3;
+  double heading = 4;
+  int64 timestamp = 5;
+}
+
+enum VehicleType {
+  UNKNOWN = 0;
+  SEDAN = 1;
+  SUV = 2;
+  VAN = 3;
+  TRUCK = 4;
+  BUS = 5;
+  SEMI = 6;
+}
+
+enum VehicleStatus {
+  STATUS_UNKNOWN = 0;
+  ACTIVE = 1;
+  MAINTENANCE = 2;
+  OUT_OF_SERVICE = 3;
+  RESERVED = 4;
+  IN_USE = 5;
+}
