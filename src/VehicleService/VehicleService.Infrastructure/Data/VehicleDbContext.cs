@@ -23,14 +23,14 @@ namespace VehicleService.Infrastructure.Data
                 entity.Property(e => e.Manufacturer).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.VIN).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Year).IsRequired();
-                //entity.OwnsOne(e => e.LastKnownLocation, loc =>
-                //{
-                //    loc.Property(p => p.Latitude).HasColumnName("LastLatitude");
-                //    loc.Property(p => p.Longitude).HasColumnName("LastLongitude");
-                //    loc.Property(p => p.Speed).HasColumnName("LastSpeed");
-                //    loc.Property(p => p.Heading).HasColumnName("LastHeading");
-                //    loc.Property(p => p.Timestamp).HasColumnName("LastLocationTimestamp");
-                //});
+                entity.OwnsOne(e => e.LastKnownLocation, loc =>
+                {
+                    loc.Property(p => p.Latitude).HasColumnName("LastLatitude");
+                    loc.Property(p => p.Longitude).HasColumnName("LastLongitude");
+                    loc.Property(p => p.Speed).HasColumnName("LastSpeed");
+                    loc.Property(p => p.Heading).HasColumnName("LastHeading");
+                    loc.Property(p => p.Timestamp).HasColumnName("LastLocationTimestamp");
+                });
 
                 entity.HasMany(e => e.MaintenanceHistory)
                     .WithOne()
