@@ -1,65 +1,40 @@
-using Microsoft.EntityFrameworkCore;
 using VehicleService.API.Services;
-using VehicleService.Application.Services;
-using VehicleService.Domain.Repositories;
-using VehicleService.Infrastructure.Data;
-using VehicleService.Infrastructure.Repositories;
+using VehicleService.Application;
+using VehicleService.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Add services to the container.
 builder.Services.AddGrpc(option =>
 {
     option.EnableDetailedErrors = true;
 });
+builder.Services.AddGrpcReflection();
 
-// Configure database
-builder.Services.AddDbContext<VehicleDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("VehicleConnection")));
+builder.Services.AddVehicleServiceApplication();
+builder.Services.AddVehicleServiceInfrastructure(builder.Configuration);
 
-// Configure application services
-builder.Services.AddScoped<IVehicleRepository, VehicleRepository>();
-builder.Services.AddScoped<IVehicleService, VehicleService.Application.Services.VehicleService>();
 
-// Add health checks
-//builder.Services.AddHealthChecks()
-//    .AddDbContextCheck<VehicleDbContext>();
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
 
-//// Add OpenTelemetry
-//builder.Services.AddOpenTelemetry()
-//    .WithTracing(tracerProviderBuilder =>
-//    {
-//        tracerProviderBuilder
-//            .AddSource("FleetManagement.VehicleService")
-//            .AddGrpcClientInstrumentation()
-//            .AddAspNetCoreInstrumentation()
-//            .AddEntityFrameworkCoreInstrumentation()
-//            .AddOtlpExporter(options => options.Endpoint = new Uri(builder.Configuration["Telemetry:OtlpEndpoint"]));
-//    })
-//    .WithMetrics(meterProviderBuilder =>
-//    {
-//        meterProviderBuilder
-//            .AddMeter("FleetManagement.VehicleService")
-//            .AddAspNetCoreInstrumentation()
-//            .AddOtlpExporter(options => options.Endpoint = new Uri(builder.Configuration["Telemetry:OtlpEndpoint"]));
-//    });
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
 app.MapGrpcService<GrpcVehicleService>();
 
-if (app.Environment.IsDevelopment())
+app.UseRouting(); // Matches request to an endpoint.
+app.UseEndpoints(endpoint =>  //Execute the matched endpoint.
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    endpoint.MapGrpcService<GrpcVehicleService>();
+    if (app.Environment.IsDevelopment())
+    {
+        endpoint.MapGrpcReflectionService();
+    }
+    endpoint.MapControllers();
+});
 
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
+app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
 app.Run();
