@@ -43,8 +43,8 @@ namespace VehicleService.Infrastructure.Repositories
 
             return await query
                 .OrderBy(v => v.RegistrationNumber)
-                .Skip((pageNumber - 1) * pageSize)
-                .Take(pageSize)
+                //  .Skip((pageNumber - 1) * pageSize)
+                //.Take(pageSize)
                 .ToListAsync();
         }
 
