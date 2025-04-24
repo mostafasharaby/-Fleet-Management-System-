@@ -24,8 +24,8 @@ namespace VehicleService.API.Services
             {
                 throw new RpcException(new Status(StatusCode.NotFound, "Vehicle not found"));
             }
-
-            return _mapper.Map<VehicleResponse>(vehicle);
+            var mappedVehicle = _mapper.Map<VehicleResponse>(vehicle);
+            return mappedVehicle;
         }
         public override async Task<ListVehiclesResponse> ListVehicles(ListVehiclesRequest request, ServerCallContext context)
         {

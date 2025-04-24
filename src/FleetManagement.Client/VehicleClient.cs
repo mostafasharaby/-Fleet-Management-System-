@@ -16,25 +16,14 @@ namespace FleetManagement.Client
             _logger = logger;
         }
 
-        //private VehicleService.API.VehicleService.VehicleServiceClient Client
-        //{
-        //    get
-        //    {
-        //        if (_client == null)
-        //        {
-        //            var channel = GrpcChannel.ForAddress("https://localhost:7206");
-        //            _client = new VehicleService.API.VehicleService.VehicleServiceClient(channel);
-        //        }
-        //        return _client;
-        //    }
-        //}
-
-        public async Task<VehicleResponse> GetVehicleAsync(Guid vehicleId)
+        public async Task<VehicleResponse> GetVehicleAsync(string vehicleId)
         {
             try
             {
-                var request = new GetVehicleRequest { VehicleId = "8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C" };
-                return await _client.GetVehicleAsync(request);
+                var request = new GetVehicleRequest { VehicleId = vehicleId };
+                var response = await _client.GetVehicleAsync(request);
+                Console.WriteLine("response :", response);
+                return response;
             }
             catch (RpcException ex) when (ex.StatusCode == StatusCode.NotFound)
             {
@@ -74,7 +63,7 @@ namespace FleetManagement.Client
         {
             while (!stoppingToken.IsCancellationRequested)
             {
-                await GetVehicleAsync(await Task.FromResult(Guid.NewGuid()));
+                await GetVehicleAsync("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C");
             }
         }
     }

@@ -14,6 +14,7 @@ builder.Services.AddGrpcReflection();
 builder.Services.AddVehicleServiceApplication();
 builder.Services.AddVehicleServiceInfrastructure(builder.Configuration);
 
+builder.Services.AddAutoMapper(typeof(VehicleService.API.Mapping.VehicleProfile));
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
@@ -22,7 +23,7 @@ builder.Services.AddEndpointsApiExplorer();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
-app.MapGrpcService<GrpcVehicleService>();
+//app.MapGrpcService<GrpcVehicleService>();
 
 app.UseRouting(); // Matches request to an endpoint.
 app.UseEndpoints(endpoint =>  //Execute the matched endpoint.
