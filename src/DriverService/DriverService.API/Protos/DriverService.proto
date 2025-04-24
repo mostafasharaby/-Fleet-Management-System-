@@ -1,0 +1,216 @@
+syntax = "proto3";
+
+option csharp_namespace = "DriverService.API";
+
+package driver;
+
+service DriverService {
+  // Get driver by ID
+  rpc GetDriver (GetDriverRequest) returns (DriverResponse);
+  
+  // List drivers with optional filtering
+  rpc ListDrivers (ListDriversRequest) returns (ListDriversResponse);
+  
+  // Create a new driver
+  rpc CreateDriver (CreateDriverRequest) returns (DriverResponse);
+  
+  // Update driver details
+  rpc UpdateDriver (UpdateDriverRequest) returns (DriverResponse);
+  
+  // Delete a driver
+  rpc DeleteDriver (DeleteDriverRequest) returns (DeleteDriverResponse);
+  
+  // Get driver assignments
+  rpc GetDriverAssignments (GetDriverAssignmentsRequest) returns (GetDriverAssignmentsResponse);
+  
+  // Assign vehicle to driver
+  rpc AssignVehicle (AssignVehicleRequest) returns (AssignmentResponse);
+  
+  // Complete assignment
+  rpc CompleteAssignment (CompleteAssignmentRequest) returns (AssignmentResponse);
+  
+  // Get driver availability
+  rpc GetDriverAvailability (GetDriverAvailabilityRequest) returns (GetDriverAvailabilityResponse);
+  
+  // Schedule driver
+  rpc ScheduleDriver (ScheduleDriverRequest) returns (ScheduleResponse);
+}
+
+message GetDriverRequest {
+  string driver_id = 1;
+}
+
+message ListDriversRequest {
+  int32 page_size = 1;
+  int32 page_number = 2;
+  string filter = 3;
+  DriverStatus status = 4;
+}
+
+message ListDriversResponse {
+  repeated DriverResponse drivers = 1;
+  int32 total_count = 2;
+  int32 page_count = 3;
+}
+
+message CreateDriverRequest {
+  string first_name = 1;
+  string last_name = 2;
+  string email = 3;
+  string phone_number = 4;
+  string license_number = 5;
+  string license_state = 6;
+  int64 license_expiry = 7;
+  DriverType type = 8;
+}
+
+message UpdateDriverRequest {
+  string driver_id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+  string license_number = 6;
+  string license_state = 7;
+  int64 license_expiry = 8;
+  DriverStatus status = 9;
+  DriverType type = 10;
+}
+
+message DeleteDriverRequest {
+  string driver_id = 1;
+}
+
+message DeleteDriverResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetDriverAssignmentsRequest {
+  string driver_id = 1;
+  int64 from_date = 2;
+  int64 to_date = 3;
+}
+
+message GetDriverAssignmentsResponse {
+  repeated AssignmentResponse assignments = 1;
+}
+
+message AssignVehicleRequest {
+  string driver_id = 1;
+  string vehicle_id = 2;
+  int64 start_time = 3;
+  int64 end_time = 4;
+  string notes = 5;
+}
+
+message CompleteAssignmentRequest {
+  string assignment_id = 1;
+  float final_odometer = 2;
+  float fuel_level = 3;
+  string notes = 4;
+}
+
+message AssignmentResponse {
+  string id = 1;
+  string driver_id = 2;
+  string vehicle_id = 3;
+  int64 start_time = 4;
+  int64 end_time = 5;
+  string notes = 6;
+  AssignmentStatus status = 7;
+  float start_odometer = 8;
+  float end_odometer = 9;
+  int64 created_at = 10;
+  int64 updated_at = 11;
+}
+
+message GetDriverAvailabilityRequest {
+  string driver_id = 1;
+  int64 from_date = 2;
+  int64 to_date = 3;
+}
+
+message GetDriverAvailabilityResponse {
+  repeated AvailabilitySlot availability_slots = 1;
+}
+
+message AvailabilitySlot {
+  int64 start_time = 1;
+  int64 end_time = 2;
+  bool is_available = 3;
+  string assignment_id = 4;
+}
+
+message ScheduleDriverRequest {
+  string driver_id = 1;
+  repeated ScheduleSlot schedule_slots = 2;
+}
+
+message ScheduleSlot {
+  int64 start_time = 1;
+  int64 end_time = 2;
+  ScheduleType type = 3;
+  string notes = 4;
+}
+
+message ScheduleResponse {
+  bool success = 1;
+  string message = 2;
+  repeated ScheduleConflict conflicts = 3;
+}
+
+message ScheduleConflict {
+  int64 start_time = 1;
+  int64 end_time = 2;
+  string reason = 3;
+}
+
+message DriverResponse {
+  string id = 1;
+  string first_name = 2;
+  string last_name = 3;
+  string email = 4;
+  string phone_number = 5;
+  string license_number = 6;
+  string license_state = 7;
+  int64 license_expiry = 8;
+  DriverStatus status = 9;
+  DriverType type = 10;
+  int64 created_at = 11;
+  int64 updated_at = 12;
+}
+
+enum DriverStatus {
+  STATUS_UNKNOWN = 0;
+  ACTIVE = 1;
+  INACTIVE = 2;
+  ON_LEAVE = 3;
+  SUSPENDED = 4;
+  TRAINING = 5;
+}
+
+enum DriverType {
+  TYPE_UNKNOWN = 0;
+  FULL_TIME = 1;
+  PART_TIME = 2;
+  CONTRACT = 3;
+  TEMPORARY = 4;
+}
+
+enum AssignmentStatus {
+  ASSIGNMENT_UNKNOWN = 0;
+  PENDING = 1;
+  IN_PROGRESS = 2;
+  COMPLETED = 3;
+  CANCELLED = 4;
+}
+
+enum ScheduleType {
+  SCHEDULE_UNKNOWN = 0;
+  WORK = 1;
+  BREAK = 2;
+  VACATION = 3;
+  SICK_LEAVE = 5;
+  MAINTENANCE = 6;
+}
