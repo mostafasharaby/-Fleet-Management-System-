@@ -1,0 +1,146 @@
+syntax = "proto3";
+
+option csharp_namespace = "RouteService.API";
+
+package route;
+
+service RouteService {
+  // Route management
+  rpc GetRoute (GetRouteRequest) returns (RouteResponse);
+  rpc GetAllRoutes (GetAllRoutesRequest) returns (RoutesResponse);
+  rpc GetRoutesByVehicle (GetRoutesByVehicleRequest) returns (RoutesResponse);
+  rpc GetRoutesByDriver (GetRoutesByDriverRequest) returns (RoutesResponse);
+  rpc GetRoutesByStatus (GetRoutesByStatusRequest) returns (RoutesResponse);
+  rpc GetRoutesByDateRange (GetRoutesByDateRangeRequest) returns (RoutesResponse);
+  rpc CreateRoute (CreateRouteRequest) returns (RouteResponse);
+  rpc UpdateRoute (UpdateRouteRequest) returns (RouteResponse);
+  rpc DeleteRoute (DeleteRouteRequest) returns (DeleteRouteResponse);
+  
+  // Route operations
+  rpc OptimizeRoute (OptimizeRouteRequest) returns (RouteResponse);
+  rpc StartRoute (StartRouteRequest) returns (RouteResponse);
+  rpc CompleteRoute (CompleteRouteRequest) returns (RouteResponse);
+  rpc CancelRoute (CancelRouteRequest) returns (RouteResponse);
+  
+  // Stop management
+  rpc AddStopToRoute (AddStopToRouteRequest) returns (RouteResponse);
+  rpc UpdateStopStatus (UpdateStopStatusRequest) returns (RouteResponse);
+}
+
+message GetRouteRequest {
+  string route_id = 1;
+}
+
+message GetAllRoutesRequest {
+  // Optional pagination
+  int32 page_number = 1;
+  int32 page_size = 2;
+}
+
+message GetRoutesByVehicleRequest {
+  string vehicle_id = 1;
+}
+
+message GetRoutesByDriverRequest {
+  string driver_id = 1;
+}
+
+message GetRoutesByStatusRequest {
+  string status = 1;
+}
+
+message GetRoutesByDateRangeRequest {
+  string start_date = 1;
+  string end_date = 2;
+}
+
+message CreateRouteRequest {
+  string name = 1;
+  string vehicle_id = 2;
+  string driver_id = 3;
+  string start_time = 4;
+  repeated RouteStopMessage stops = 5;
+}
+
+message UpdateRouteRequest {
+  string route_id = 1;
+  string name = 2;
+  string vehicle_id = 3;
+  string driver_id = 4;
+  string start_time = 5;
+}
+
+message DeleteRouteRequest {
+  string route_id = 1;
+}
+
+message DeleteRouteResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message OptimizeRouteRequest {
+  string route_id = 1;
+}
+
+message StartRouteRequest {
+  string route_id = 1;
+}
+
+message CompleteRouteRequest {
+  string route_id = 1;
+}
+
+message CancelRouteRequest {
+  string route_id = 1;
+  string reason = 2;
+}
+
+message AddStopToRouteRequest {
+  string route_id = 1;
+  RouteStopMessage stop = 2;
+}
+
+message UpdateStopStatusRequest {
+  string route_id = 1;
+  string stop_id = 2;
+  string status = 3;
+}
+
+message RouteMessage {
+  string id = 1;
+  string name = 2;
+  string vehicle_id = 3;
+  string driver_id = 4;
+  string start_time = 5;
+  string end_time = 6;
+  string status = 7;
+  repeated RouteStopMessage stops = 8;
+  string created_at = 9;
+  string updated_at = 10;
+  double total_distance = 11;
+  int32 estimated_duration_minutes = 12;
+}
+
+message RouteStopMessage {
+  string id = 1;
+  int32 sequence_number = 2;
+  string name = 3;
+  string address = 4;
+  double latitude = 5;
+  double longitude = 6;
+  string planned_arrival_time = 7;
+  string actual_arrival_time = 8;
+  string departure_time = 9;
+  string status = 10;
+  int32 estimated_duration_minutes = 11;
+  string notes = 12;
+}
+
+message RouteResponse {
+  RouteMessage route = 1;
+}
+
+message RoutesResponse {
+  repeated RouteMessage routes = 1;
+}
