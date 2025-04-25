@@ -7,7 +7,7 @@ package route;
 service RouteService {
   // Route management
   rpc GetRoute (GetRouteRequest) returns (RouteResponse);
-  rpc GetAllRoutes (GetAllRoutesRequest) returns (RoutesResponse);
+  rpc GetAllRoutes (GetAllRoutesRequest) returns (ListPaginatedRoutesResponse);
   rpc GetRoutesByVehicle (GetRoutesByVehicleRequest) returns (RoutesResponse);
   rpc GetRoutesByDriver (GetRoutesByDriverRequest) returns (RoutesResponse);
   rpc GetRoutesByStatus (GetRoutesByStatusRequest) returns (RoutesResponse);
@@ -32,10 +32,13 @@ message GetRouteRequest {
 }
 
 message GetAllRoutesRequest {
-  // Optional pagination
-  int32 page_number = 1;
-  int32 page_size = 2;
+  int32 page_size = 1;
+  int32 page_number = 2;
+  string filter = 3;
+  RouteStatus status = 4;
 }
+
+
 
 message GetRoutesByVehicleRequest {
   string vehicle_id = 1;
@@ -137,6 +140,12 @@ message RouteStopMessage {
   string notes = 12;
 }
 
+message GetRouteStopRequest {
+  string route_id = 1;
+  string stop_id = 2;
+}
+
+
 message RouteResponse {
   RouteMessage route = 1;
 }
@@ -144,3 +153,22 @@ message RouteResponse {
 message RoutesResponse {
   repeated RouteMessage routes = 1;
 }
+
+message RouteStopResponse {
+  RouteStopMessage stop = 1;
+}
+
+message ListPaginatedRoutesResponse {
+  repeated RouteMessage routes = 1;
+  int32 total_count = 2;
+  int32 page_count = 3;
+}
+
+enum RouteStatus {
+  PLANNED = 0;
+  IN_PROGRESS = 1;
+  COMPLETED = 2;
+  CANCELLED = 3;
+}
+
+

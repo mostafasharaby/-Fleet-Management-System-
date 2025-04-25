@@ -1,14 +1,29 @@
 ﻿using RouteService.API.Services;
+using RouteService.Application;
+using RouteService.Infrastructure;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddGrpc();
+builder.Services.AddGrpc(option => option.EnableDetailedErrors = true);
+builder.Services.AddGrpcReflection();
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddRouteServiceInfrastructure(builder.Configuration);
+builder.Services.AddRouteServiceApplication();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+app.UseRouting();
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapGrpcService<GrpcRouteService>();
+    if (app.Environment.IsDevelopment())
+    {
+        endpoint.MapGrpcReflectionService();
+    }
+    endpoint.MapControllers();
+});
 app.Run();

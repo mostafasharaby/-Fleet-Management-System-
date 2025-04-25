@@ -6,6 +6,8 @@ namespace RouteService.Domain.Repositories
     public interface IRouteRepository
     {
         Task<Route> GetByIdAsync(Guid id);
+        Task<IEnumerable<Route>> ListAsync(int pageSize, int pageNumber, string filter = null, RouteStatus? status = null);
+        Task<int> CountAsync(string filter = null, RouteStatus? status = null);
         Task<IEnumerable<Route>> GetAllAsync();
         Task<IEnumerable<Route>> GetByVehicleIdAsync(Guid vehicleId);
         Task<IEnumerable<Route>> GetByDriverIdAsync(Guid driverId);

@@ -1,17 +1,20 @@
-﻿using Grpc.Core;
+﻿using AutoMapper;
+using Grpc.Core;
 using RouteService.Application.Services;
 
 namespace RouteService.API.Services
 {
     public class GrpcRouteService : RouteService.RouteServiceBase
     {
-        private readonly IRouteAppService _routeService;
+        private readonly IRouteService _routeService;
+        private readonly IMapper _mapper;
         private readonly ILogger<GrpcRouteService> _logger;
 
-        public GrpcRouteService(IRouteAppService routeService, ILogger<GrpcRouteService> logger)
+        public GrpcRouteService(IRouteService routeService, ILogger<GrpcRouteService> logger, IMapper mapper)
         {
             _routeService = routeService;
             _logger = logger;
+            _mapper = mapper;
         }
 
         public override async Task<RouteResponse> GetRoute(GetRouteRequest request, ServerCallContext context)
@@ -19,17 +22,14 @@ namespace RouteService.API.Services
             try
             {
                 var routeId = Guid.Parse(request.RouteId);
-                var routeDto = await _routeService.GetRouteByIdAsync(routeId);
+                var route = await _routeService.GetRouteAsync(routeId);
 
-                if (routeDto == null)
+                if (route == null)
                 {
                     throw new RpcException(new Status(StatusCode.NotFound, $"Route with ID {request.RouteId} not found"));
                 }
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -46,15 +46,17 @@ namespace RouteService.API.Services
             }
         }
 
-        public override async Task<RoutesResponse> GetAllRoutes(GetAllRoutesRequest request, ServerCallContext context)
+        public override async Task<ListPaginatedRoutesResponse> GetAllRoutes(GetAllRoutesRequest request, ServerCallContext context)
         {
             try
             {
-                var routes = await _routeService.GetAllRoutesAsync();
-
-                var response = new RoutesResponse();
-                response.Routes.AddRange(routes.Select(MapToRouteMessage));
-
+                var routes = await _routeService.ListRoutesAsync(request.PageSize, request.PageNumber, request.Filter, (Domain.Enums.RouteStatus)request.Status);
+                var response = new ListPaginatedRoutesResponse
+                {
+                    PageCount = routes.PageCount,
+                    TotalCount = routes.TotalCount
+                };
+                response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
                 return response;
             }
             catch (Exception ex)
@@ -72,7 +74,7 @@ namespace RouteService.API.Services
                 var routes = await _routeService.GetRoutesByVehicleIdAsync(vehicleId);
 
                 var response = new RoutesResponse();
-                response.Routes.AddRange(routes.Select(MapToRouteMessage));
+                response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
 
                 return response;
             }
@@ -95,7 +97,7 @@ namespace RouteService.API.Services
                 var routes = await _routeService.GetRoutesByDriverIdAsync(driverId);
 
                 var response = new RoutesResponse();
-                response.Routes.AddRange(routes.Select(MapToRouteMessage));
+                response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
 
                 return response;
             }
@@ -110,27 +112,27 @@ namespace RouteService.API.Services
             }
         }
 
-        public override async Task<RoutesResponse> GetRoutesByStatus(GetRoutesByStatusRequest request, ServerCallContext context)
-        {
-            try
-            {
-                var routes = await _routeService.GetRoutesByStatusAsync(request.Status);
+        //public override async Task<RoutesResponse> GetRoutesByStatus(GetRoutesByStatusRequest request, ServerCallContext context)
+        //{
+        //    try
+        //    {
+        //        var routes = await _routeService.GetRoutesByStatusAsync(request.Status);
 
-                var response = new RoutesResponse();
-                response.Routes.AddRange(routes.Select(MapToRouteMessage));
+        //        var response = new RoutesResponse();
+        //        response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
 
-                return response;
-            }
-            catch (ArgumentException ex)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error retrieving routes by status");
-                throw new RpcException(new Status(StatusCode.Internal, "Internal error retrieving routes"));
-            }
-        }
+        //        return response;
+        //    }
+        //    catch (ArgumentException ex)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error retrieving routes by status");
+        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error retrieving routes"));
+        //    }
+        //}
 
         public override async Task<RoutesResponse> GetRoutesByDateRange(GetRoutesByDateRangeRequest request, ServerCallContext context)
         {
@@ -142,7 +144,8 @@ namespace RouteService.API.Services
                 var routes = await _routeService.GetRoutesByDateRangeAsync(startDate, endDate);
 
                 var response = new RoutesResponse();
-                response.Routes.AddRange(routes.Select(MapToRouteMessage));
+                response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
+
 
                 return response;
             }
@@ -157,39 +160,36 @@ namespace RouteService.API.Services
             }
         }
 
-        public override async Task<RouteResponse> CreateRoute(CreateRouteRequest request, ServerCallContext context)
-        {
-            try
-            {
-                var vehicleId = Guid.Parse(request.VehicleId);
-                var driverId = Guid.Parse(request.DriverId);
-                var startTime = DateTime.Parse(request.StartTime);
+        //public override async Task<RouteResponse> CreateRoute(CreateRouteRequest request, ServerCallContext context)
+        //{
+        //    try
+        //    {
+        //        var vehicleId = Guid.Parse(request.VehicleId);
+        //        var driverId = Guid.Parse(request.DriverId);
+        //        var startTime = DateTime.Parse(request.StartTime);
 
-                var stopDtos = request.Stops.Select(MapToRouteStopDto).ToList();
+        //        var stopDtos = request.Stops.Select(MapToRouteStopDto).ToList();
 
-                var routeDto = await _routeService.CreateRouteAsync(
-                    request.Name,
-                    vehicleId,
-                    driverId,
-                    startTime,
-                    stopDtos
-                );
+        //        var route = await _routeService.CreateRouteAsync(
+        //            request.Name,
+        //            vehicleId,
+        //            driverId,
+        //            startTime,
+        //            stopDtos
+        //        );
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
-            }
-            catch (FormatException)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error creating route");
-                throw new RpcException(new Status(StatusCode.Internal, "Internal error creating route"));
-            }
-        }
+        //        return _mapper.Map<RouteResponse>(route);
+        //    }
+        //    catch (FormatException)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error creating route");
+        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error creating route"));
+        //    }
+        //}
 
         public override async Task<RouteResponse> UpdateRoute(UpdateRouteRequest request, ServerCallContext context)
         {
@@ -200,7 +200,7 @@ namespace RouteService.API.Services
                 var driverId = Guid.Parse(request.DriverId);
                 var startTime = DateTime.Parse(request.StartTime);
 
-                var routeDto = await _routeService.UpdateRouteAsync(
+                var route = await _routeService.UpdateRouteAsync(
                     routeId,
                     request.Name,
                     vehicleId,
@@ -208,10 +208,7 @@ namespace RouteService.API.Services
                     startTime
                 );
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -261,12 +258,9 @@ namespace RouteService.API.Services
             try
             {
                 var routeId = Guid.Parse(request.RouteId);
-                var routeDto = await _routeService.OptimizeRouteAsync(routeId);
+                var route = await _routeService.OptimizeRouteAsync(routeId);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -288,12 +282,9 @@ namespace RouteService.API.Services
             try
             {
                 var routeId = Guid.Parse(request.RouteId);
-                var routeDto = await _routeService.StartRouteAsync(routeId);
+                var route = await _routeService.StartRouteAsync(routeId);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -319,12 +310,9 @@ namespace RouteService.API.Services
             try
             {
                 var routeId = Guid.Parse(request.RouteId);
-                var routeDto = await _routeService.CompleteRouteAsync(routeId);
+                var route = await _routeService.CompleteRouteAsync(routeId);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -350,12 +338,9 @@ namespace RouteService.API.Services
             try
             {
                 var routeId = Guid.Parse(request.RouteId);
-                var routeDto = await _routeService.CancelRouteAsync(routeId, request.Reason);
+                var route = await _routeService.CancelRouteAsync(routeId, request.Reason);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
+                return _mapper.Map<RouteResponse>(route);
             }
             catch (FormatException)
             {
@@ -376,169 +361,164 @@ namespace RouteService.API.Services
             }
         }
 
-        public override async Task<RouteResponse> AddStopToRoute(AddStopToRouteRequest request, ServerCallContext context)
-        {
-            try
-            {
-                var routeId = Guid.Parse(request.RouteId);
-                var stopDto = MapToRouteStopDto(request.Stop);
+        //public override async Task<RouteResponse> AddStopToRoute(AddStopToRouteRequest request, ServerCallContext context)
+        //{
+        //    try
+        //    {
+        //        var routeId = Guid.Parse(request.RouteId);
+        //        var stopDto = MapToRouteStopDto(request.Stop);
 
-                var routeDto = await _routeService.AddStopToRouteAsync(routeId, stopDto);
+        //        var route = await _routeService.AddStopToRouteAsync(routeId, stopDto);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
-            }
-            catch (FormatException)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
-            }
-            catch (KeyNotFoundException ex)
-            {
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error adding stop to route");
-                throw new RpcException(new Status(StatusCode.Internal, "Internal error adding stop to route"));
-            }
-        }
+        //        return _mapper.Map<RouteResponse>(route);
 
-        public override async Task<RouteResponse> UpdateStopStatus(UpdateStopStatusRequest request, ServerCallContext context)
-        {
-            try
-            {
-                var routeId = Guid.Parse(request.RouteId);
-                var stopId = Guid.Parse(request.StopId);
+        //    }
+        //    catch (FormatException)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error adding stop to route");
+        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error adding stop to route"));
+        //    }
+        //}
 
-                var routeDto = await _routeService.UpdateStopStatusAsync(routeId, stopId, request.Status);
+        //public override async Task<RouteResponse> UpdateStopStatus(UpdateStopStatusRequest request, ServerCallContext context)
+        //{
+        //    try
+        //    {
+        //        var routeId = Guid.Parse(request.RouteId);
+        //        var stopId = Guid.Parse(request.StopId);
 
-                return new RouteResponse
-                {
-                    Route = MapToRouteMessage(routeDto)
-                };
-            }
-            catch (FormatException)
-            {
-                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID format"));
-            }
-            catch (KeyNotFoundException ex)
-            {
-                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-            }
-            catch (InvalidOperationException ex)
-            {
-                throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error updating stop status");
-                throw new RpcException(new Status(StatusCode.Internal, "Internal error updating stop status"));
-            }
-        }
+        //        var route = await _routeService.UpdateStopStatusAsync(routeId, stopId, request.Status);
 
-        #region Helper Methods
+        //        return _mapper.Map<RouteResponse>(route);
+        //    }
+        //    catch (FormatException)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID format"));
+        //    }
+        //    catch (KeyNotFoundException ex)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+        //    }
+        //    catch (InvalidOperationException ex)
+        //    {
+        //        throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error updating stop status");
+        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error updating stop status"));
+        //    }
+        //}
 
-        private RouteMessage MapToRouteMessage(RouteDto routeDto)
-        {
-            if (routeDto == null)
-                return null;
+        //#region Helper Methods
 
-            var routeMessage = new RouteMessage
-            {
-                Id = routeDto.Id.ToString(),
-                Name = routeDto.Name,
-                VehicleId = routeDto.VehicleId.ToString(),
-                DriverId = routeDto.DriverId.ToString(),
-                StartTime = routeDto.StartTime.ToString("o"), // ISO 8601 format
-                Status = routeDto.Status,
-                CreatedAt = routeDto.CreatedAt.ToString("o"),
-                TotalDistance = routeDto.TotalDistance,
-                EstimatedDurationMinutes = (int)routeDto.EstimatedDuration.TotalMinutes
-            };
+        //private RouteMessage MapToRouteMessage(RouteDto routeDto)
+        //{
+        //    if (routeDto == null)
+        //        return null;
 
-            if (routeDto.EndTime.HasValue)
-                routeMessage.EndTime = routeDto.EndTime.Value.ToString("o");
+        //    var routeMessage = new RouteMessage
+        //    {
+        //        Id = routeDto.Id.ToString(),
+        //        Name = routeDto.Name,
+        //        VehicleId = routeDto.VehicleId.ToString(),
+        //        DriverId = routeDto.DriverId.ToString(),
+        //        StartTime = routeDto.StartTime.ToString("o"), // ISO 8601 format
+        //        Status = routeDto.Status,
+        //        CreatedAt = routeDto.CreatedAt.ToString("o"),
+        //        TotalDistance = routeDto.TotalDistance,
+        //        EstimatedDurationMinutes = (int)routeDto.EstimatedDuration.TotalMinutes
+        //    };
 
-            if (routeDto.UpdatedAt.HasValue)
-                routeMessage.UpdatedAt = routeDto.UpdatedAt.Value.ToString("o");
+        //    if (routeDto.EndTime.HasValue)
+        //        routeMessage.EndTime = routeDto.EndTime.Value.ToString("o");
 
-            if (routeDto.Stops != null)
-            {
-                foreach (var stop in routeDto.Stops)
-                {
-                    routeMessage.Stops.Add(MapToRouteStopMessage(stop));
-                }
-            }
+        //    if (routeDto.UpdatedAt.HasValue)
+        //        routeMessage.UpdatedAt = routeDto.UpdatedAt.Value.ToString("o");
 
-            return routeMessage;
-        }
+        //    if (routeDto.Stops != null)
+        //    {
+        //        foreach (var stop in routeDto.Stops)
+        //        {
+        //            routeMessage.Stops.Add(MapToRouteStopMessage(stop));
+        //        }
+        //    }
 
-        private RouteStopMessage MapToRouteStopMessage(RouteStopDto stopDto)
-        {
-            if (stopDto == null)
-                return null;
+        //    return routeMessage;
+        //}
 
-            var stopMessage = new RouteStopMessage
-            {
-                Id = stopDto.Id.ToString(),
-                SequenceNumber = stopDto.SequenceNumber,
-                Name = stopDto.Name,
-                Address = stopDto.Address,
-                Latitude = stopDto.Latitude,
-                Longitude = stopDto.Longitude,
-                PlannedArrivalTime = stopDto.PlannedArrivalTime.ToString("o"),
-                Status = stopDto.Status,
-                EstimatedDurationMinutes = stopDto.EstimatedDurationMinutes
-            };
+        //private RouteStopMessage MapToRouteStopMessage(RouteStopDto stopDto)
+        //{
+        //    if (stopDto == null)
+        //        return null;
 
-            if (stopDto.ActualArrivalTime.HasValue)
-                stopMessage.ActualArrivalTime = stopDto.ActualArrivalTime.Value.ToString("o");
+        //    var stopMessage = new RouteStopMessage
+        //    {
+        //        Id = stopDto.Id.ToString(),
+        //        SequenceNumber = stopDto.SequenceNumber,
+        //        Name = stopDto.Name,
+        //        Address = stopDto.Address,
+        //        Latitude = stopDto.Latitude,
+        //        Longitude = stopDto.Longitude,
+        //        PlannedArrivalTime = stopDto.PlannedArrivalTime.ToString("o"),
+        //        Status = stopDto.Status,
+        //        EstimatedDurationMinutes = stopDto.EstimatedDurationMinutes
+        //    };
 
-            if (stopDto.DepartureTime.HasValue)
-                stopMessage.DepartureTime = stopDto.DepartureTime.Value.ToString("o");
+        //    if (stopDto.ActualArrivalTime.HasValue)
+        //        stopMessage.ActualArrivalTime = stopDto.ActualArrivalTime.Value.ToString("o");
 
-            if (!string.IsNullOrEmpty(stopDto.Notes))
-                stopMessage.Notes = stopDto.Notes;
+        //    if (stopDto.DepartureTime.HasValue)
+        //        stopMessage.DepartureTime = stopDto.DepartureTime.Value.ToString("o");
 
-            return stopMessage;
-        }
+        //    if (!string.IsNullOrEmpty(stopDto.Notes))
+        //        stopMessage.Notes = stopDto.Notes;
 
-        private RouteStopDto MapToRouteStopDto(RouteStopMessage stopMessage)
-        {
-            if (stopMessage == null)
-                return null;
+        //    return stopMessage;
+        //}
 
-            var stopDto = new RouteStopDto
-            {
-                SequenceNumber = stopMessage.SequenceNumber,
-                Name = stopMessage.Name,
-                Address = stopMessage.Address,
-                Latitude = stopMessage.Latitude,
-                Longitude = stopMessage.Longitude,
-                PlannedArrivalTime = DateTime.Parse(stopMessage.PlannedArrivalTime),
-                EstimatedDurationMinutes = stopMessage.EstimatedDurationMinutes,
-                Notes = stopMessage.Notes
-            };
+        //private RouteStopDto MapToRouteStopDto(RouteStopMessage stopMessage)
+        //{
+        //    if (stopMessage == null)
+        //        return null;
 
-            if (!string.IsNullOrEmpty(stopMessage.Id))
-                stopDto.Id = Guid.Parse(stopMessage.Id);
-            else
-                stopDto.Id = Guid.NewGuid();
+        //    var stopDto = new RouteStopDto
+        //    {
+        //        SequenceNumber = stopMessage.SequenceNumber,
+        //        Name = stopMessage.Name,
+        //        Address = stopMessage.Address,
+        //        Latitude = stopMessage.Latitude,
+        //        Longitude = stopMessage.Longitude,
+        //        PlannedArrivalTime = DateTime.Parse(stopMessage.PlannedArrivalTime),
+        //        EstimatedDurationMinutes = stopMessage.EstimatedDurationMinutes,
+        //        Notes = stopMessage.Notes
+        //    };
 
-            if (!string.IsNullOrEmpty(stopMessage.ActualArrivalTime))
-                stopDto.ActualArrivalTime = DateTime.Parse(stopMessage.ActualArrivalTime);
+        //    if (!string.IsNullOrEmpty(stopMessage.Id))
+        //        stopDto.Id = Guid.Parse(stopMessage.Id);
+        //    else
+        //        stopDto.Id = Guid.NewGuid();
 
-            if (!string.IsNullOrEmpty(stopMessage.DepartureTime))
-                stopDto.DepartureTime = DateTime.Parse(stopMessage.DepartureTime);
+        //    if (!string.IsNullOrEmpty(stopMessage.ActualArrivalTime))
+        //        stopDto.ActualArrivalTime = DateTime.Parse(stopMessage.ActualArrivalTime);
 
-            return stopDto;
-        }
+        //    if (!string.IsNullOrEmpty(stopMessage.DepartureTime))
+        //        stopDto.DepartureTime = DateTime.Parse(stopMessage.DepartureTime);
+
+        //    return stopDto;
+        //}
 
     }
 }
