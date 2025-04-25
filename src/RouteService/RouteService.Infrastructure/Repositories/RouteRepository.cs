@@ -82,5 +82,42 @@ namespace RouteService.Infrastructure.Repositories
                 await _dbContext.SaveChangesAsync();
             }
         }
+
+        public async Task<IEnumerable<Route>> ListAsync(int pageSize, int pageNumber, string filter = null, RouteStatus? status = null)
+        {
+            var query = _dbContext.Routes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                query = query.Where(v => v.Name.Contains(filter));
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(v => v.Status == status.Value);
+            }
+
+            return await query
+                .OrderBy(v => v.CreatedAt)
+                .ToListAsync();
+        }
+
+        public async Task<int> CountAsync(string filter = null, RouteStatus? status = null)
+        {
+            var query = _dbContext.Routes.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(filter))
+            {
+                query = query.Where(v => v.Name.Contains(filter));
+            }
+
+            if (status.HasValue)
+            {
+                query = query.Where(v => v.Status == status.Value);
+            }
+
+            return await query.CountAsync();
+        }
     }
 }
+
