@@ -1,0 +1,153 @@
+syntax = "proto3";
+
+option csharp_namespace = "TelemetryService.API.Protos";
+import "google/protobuf/timestamp.proto";
+package telemetry;
+
+service TelemetryService {
+  // Telemetry data operations
+  rpc GetTelemetryDataById (GetTelemetryDataByIdRequest) returns (TelemetryDataResponse);
+  rpc GetTelemetryDataByVehicleId (GetTelemetryDataByVehicleIdRequest) returns (TelemetryDataListResponse);
+  rpc GetTelemetryDataByTimeRange (GetTelemetryDataByTimeRangeRequest) returns (TelemetryDataListResponse);
+  rpc SendTelemetryData (TelemetryDataRequest) returns (TelemetryDataResponse);
+  rpc SendBatchTelemetryData (BatchTelemetryDataRequest) returns (BatchTelemetryDataResponse);
+  rpc GetLatestTelemetryForAllVehicles (GetLatestTelemetryRequest) returns (TelemetryDataListResponse);
+  
+  // Stream telemetry data for a vehicle
+  rpc StreamVehicleTelemetry (StreamVehicleTelemetryRequest) returns (stream TelemetryDataResponse);
+  
+  // Alert threshold operations
+  rpc GetAlertThresholdsByVehicleId (GetAlertThresholdsByVehicleIdRequest) returns (AlertThresholdListResponse);
+  rpc GetAlertThresholdById (GetAlertThresholdByIdRequest) returns (AlertThresholdResponse);
+  rpc CreateAlertThreshold (CreateAlertThresholdRequest) returns (AlertThresholdResponse);
+  rpc UpdateAlertThreshold (UpdateAlertThresholdRequest) returns (AlertThresholdResponse);
+  rpc DeleteAlertThreshold (DeleteAlertThresholdRequest) returns (DeleteAlertThresholdResponse);
+}
+
+message GetTelemetryDataByIdRequest {
+  string id = 1;
+}
+
+message GetTelemetryDataByVehicleIdRequest {
+  string vehicle_id = 1;
+  int32 limit = 2;
+}
+
+message GetTelemetryDataByTimeRangeRequest {
+  string vehicle_id = 1;
+  google.protobuf.Timestamp start_time = 2;
+  google.protobuf.Timestamp end_time = 3;
+}
+
+message GetLatestTelemetryRequest {
+  // Optional fields for filtering or limiting results
+}
+
+message TelemetryDataRequest {
+  string vehicle_id = 1;
+  google.protobuf.Timestamp timestamp = 2;
+  double latitude = 3;
+  double longitude = 4;
+  double speed = 5;
+  double fuel_level = 6;
+  double engine_temperature = 7;
+  double battery_voltage = 8;
+  int32 engine_rpm = 9;
+  bool check_engine_light_on = 10;
+  double odometer_reading = 11;
+  string diagnostic_code = 12;
+}
+
+message BatchTelemetryDataRequest {
+  repeated TelemetryDataRequest telemetry_data = 1;
+}
+
+message TelemetryDataResponse {
+  string id = 1;
+  string vehicle_id = 2;
+  google.protobuf.Timestamp timestamp = 3;
+  double latitude = 4;
+  double longitude = 5;
+  double speed = 6;
+  double fuel_level = 7;
+  double engine_temperature = 8;
+  double battery_voltage = 9;
+  int32 engine_rpm = 10;
+  bool check_engine_light_on = 11;
+  double odometer_reading = 12;
+  string diagnostic_code = 13;
+}
+
+message TelemetryDataListResponse {
+  repeated TelemetryDataResponse telemetry_data = 1;
+}
+
+message BatchTelemetryDataResponse {
+  int32 processed_count = 1;
+  bool success = 2;
+  string message = 3;
+}
+
+message StreamVehicleTelemetryRequest {
+  string vehicle_id = 1;
+}
+
+message GetAlertThresholdsByVehicleIdRequest {
+  string vehicle_id = 1;
+}
+
+message GetAlertThresholdByIdRequest {
+  string id = 1;
+}
+
+message CreateAlertThresholdRequest {
+  string vehicle_id = 1;
+  string parameter_name = 2;
+  double min_value = 3;
+  double max_value = 4;
+  bool is_enabled = 5;
+  string alert_message = 6;
+  AlertSeverity severity = 7;
+}
+
+message UpdateAlertThresholdRequest {
+  string id = 1;
+  string vehicle_id = 2;
+  string parameter_name = 3;
+  double min_value = 4;
+  double max_value = 5;
+  bool is_enabled = 6;
+  string alert_message = 7;
+  AlertSeverity severity = 8;
+}
+
+message DeleteAlertThresholdRequest {
+  string id = 1;
+}
+
+message DeleteAlertThresholdResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message AlertThresholdResponse {
+  string id = 1;
+  string vehicle_id = 2;
+  string parameter_name = 3;
+  double min_value = 4;
+  double max_value = 5;
+  bool is_enabled = 6;
+  string alert_message = 7;
+  AlertSeverity severity = 8;
+}
+
+message AlertThresholdListResponse {
+  repeated AlertThresholdResponse thresholds = 1;
+}
+
+enum AlertSeverity {
+  LOW = 0;
+  MEDIUM = 1;
+  HIGH = 2;
+  CRITICAL = 3;
+}
