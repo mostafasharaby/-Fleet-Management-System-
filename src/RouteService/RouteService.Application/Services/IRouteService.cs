@@ -16,7 +16,7 @@ namespace RouteService.Application.Services
             Guid vehicleId,
             Guid driverId,
             DateTime startTime,
-            IEnumerable<RouteStop> stops);
+            List<RouteStop> stops);
         Task<Route> UpdateRouteAsync(
             Guid id,
             string name,

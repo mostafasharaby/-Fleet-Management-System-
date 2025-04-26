@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Grpc.Core;
 using RouteService.Application.Services;
+using RouteService.Domain.Models;
 
 namespace RouteService.API.Services
 {
@@ -160,36 +161,37 @@ namespace RouteService.API.Services
             }
         }
 
-        //public override async Task<RouteResponse> CreateRoute(CreateRouteRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var vehicleId = Guid.Parse(request.VehicleId);
-        //        var driverId = Guid.Parse(request.DriverId);
-        //        var startTime = DateTime.Parse(request.StartTime);
+        public override async Task<RouteResponse> CreateRoute(CreateRouteRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var vehicleId = Guid.Parse(request.VehicleId);
+                var driverId = Guid.Parse(request.DriverId);
+                var startTime = DateTime.Parse(request.StartTime);
 
-        //        var stopDtos = request.Stops.Select(MapToRouteStopDto).ToList();
+                //var stops = _mapper.Map<List<RouteStopResponse>>(request.Stops);
+                var routeStops = _mapper.Map<List<RouteStop>>(request.Stops);
 
-        //        var route = await _routeService.CreateRouteAsync(
-        //            request.Name,
-        //            vehicleId,
-        //            driverId,
-        //            startTime,
-        //            stopDtos
-        //        );
+                var route = await _routeService.CreateRouteAsync(
+                    request.Name,
+                    vehicleId,
+                    driverId,
+                    startTime,
+                    routeStops
+                );
 
-        //        return _mapper.Map<RouteResponse>(route);
-        //    }
-        //    catch (FormatException)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error creating route");
-        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error creating route"));
-        //    }
-        //}
+                return _mapper.Map<RouteResponse>(route);
+            }
+            catch (FormatException)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error creating route");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal error creating route"));
+            }
+        }
 
         public override async Task<RouteResponse> UpdateRoute(UpdateRouteRequest request, ServerCallContext context)
         {
@@ -361,36 +363,36 @@ namespace RouteService.API.Services
             }
         }
 
-        //public override async Task<RouteResponse> AddStopToRoute(AddStopToRouteRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var routeId = Guid.Parse(request.RouteId);
-        //        var stopDto = MapToRouteStopDto(request.Stop);
+        public override async Task<RouteResponse> AddStopToRoute(AddStopToRouteRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var routeId = Guid.Parse(request.RouteId);
+                var stop = _mapper.Map<RouteStop>(request.Stop);
 
-        //        var route = await _routeService.AddStopToRouteAsync(routeId, stopDto);
+                var route = await _routeService.AddStopToRouteAsync(routeId, stop);
 
-        //        return _mapper.Map<RouteResponse>(route);
+                return _mapper.Map<RouteResponse>(route);
 
-        //    }
-        //    catch (FormatException)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
-        //    }
-        //    catch (KeyNotFoundException ex)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error adding stop to route");
-        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error adding stop to route"));
-        //    }
-        //}
+            }
+            catch (FormatException)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID or date format"));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding stop to route");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal error adding stop to route"));
+            }
+        }
 
         //public override async Task<RouteResponse> UpdateStopStatus(UpdateStopStatusRequest request, ServerCallContext context)
         //{
