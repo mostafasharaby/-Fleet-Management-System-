@@ -452,10 +452,7 @@ namespace RouteService.Application.Services
             }
         }
 
-        public Task<Route> CreateRouteAsync(string name, Guid vehicleId, Guid driverId, DateTime startTime, IEnumerable<RouteStop> stops)
-        {
-            throw new NotImplementedException();
-        }
+
     }
 }
 
