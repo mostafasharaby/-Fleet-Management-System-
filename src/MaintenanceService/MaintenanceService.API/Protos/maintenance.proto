@@ -1,0 +1,190 @@
+syntax = "proto3";
+
+option csharp_namespace = "MaintenanceService.API";
+
+package maintenance;
+
+service MaintenanceService {
+  // Core maintenance operations
+  rpc GetMaintenanceSchedule (GetMaintenanceScheduleRequest) returns (MaintenanceScheduleResponse);
+  rpc RecordMaintenanceEvent (MaintenanceEventRequest) returns (MaintenanceEventResponse);
+  rpc ScheduleMaintenance (ScheduleMaintenanceRequest) returns (ScheduleMaintenanceResponse);
+  rpc UpdateMaintenanceStatus (UpdateMaintenanceStatusRequest) returns (UpdateMaintenanceStatusResponse);
+  rpc GetMaintenanceHistory (GetMaintenanceHistoryRequest) returns (GetMaintenanceHistoryResponse);
+  
+  // Analytics and reporting
+  rpc GetVehicleHealthMetrics (VehicleHealthMetricsRequest) returns (VehicleHealthMetricsResponse);
+  rpc GenerateMaintenanceReport (MaintenanceReportRequest) returns (MaintenanceReportResponse);
+  
+  // Streaming maintenance updates
+  rpc SubscribeToMaintenanceAlerts (MaintenanceAlertSubscriptionRequest) returns (stream MaintenanceAlert);
+}
+
+// Request/Response definitions
+message GetMaintenanceScheduleRequest {
+  string vehicle_id = 1;
+  bool include_completed = 2;
+}
+
+message MaintenanceScheduleResponse {
+  repeated MaintenanceTask scheduled_tasks = 1;
+}
+
+message MaintenanceTask {
+  string task_id = 1;
+  string vehicle_id = 2;
+  string task_description = 3;
+  MaintenanceType type = 4;
+  uint64 scheduled_date = 5; // Unix timestamp
+  MaintenanceStatus status = 6;
+  string assigned_technician_id = 7;
+  int32 estimated_duration_minutes = 8;
+  repeated RequiredPart required_parts = 9;
+}
+
+enum MaintenanceType {
+  ROUTINE = 0;
+  REPAIR = 1;
+  INSPECTION = 2;
+  RECALL = 3;
+  EMERGENCY = 4;
+}
+
+enum MaintenanceStatus {
+  SCHEDULED = 0;
+  IN_PROGRESS = 1;
+  COMPLETED = 2;
+  CANCELED = 3;
+  OVERDUE = 4;
+}
+
+message MaintenanceEventRequest {
+  string vehicle_id = 1;
+  MaintenanceEvent event = 2;
+}
+
+message MaintenanceEvent {
+  string event_id = 1;
+  string vehicle_id = 2;
+  string description = 3;
+  MaintenanceType type = 4;
+  uint64 timestamp = 5; // Unix timestamp
+  string performed_by = 6;
+  double odometer_reading = 7;
+  repeated PartReplacement parts_replaced = 8;
+  string notes = 9;
+}
+
+message PartReplacement {
+  string part_id = 1;
+  string part_name = 2;
+  int32 quantity = 3;
+  double cost = 4;
+}
+
+message MaintenanceEventResponse {
+  bool success = 1;
+  string event_id = 2;
+  string message = 3;
+}
+
+message ScheduleMaintenanceRequest {
+  MaintenanceTask task = 1;
+}
+
+message ScheduleMaintenanceResponse {
+  bool success = 1;
+  string task_id = 2;
+  string message = 3;
+}
+
+message UpdateMaintenanceStatusRequest {
+  string task_id = 1;
+  MaintenanceStatus new_status = 2;
+  string updated_by = 3;
+  string notes = 4;
+}
+
+message UpdateMaintenanceStatusResponse {
+  bool success = 1;
+  string message = 2;
+}
+
+message GetMaintenanceHistoryRequest {
+  string vehicle_id = 1;
+  uint64 start_date = 2; // Unix timestamp
+  uint64 end_date = 3; // Unix timestamp
+  int32 page_size = 4;
+  int32 page_number = 5;
+}
+
+message GetMaintenanceHistoryResponse {
+  repeated MaintenanceEvent events = 1;
+  int32 total_count = 2;
+  int32 page_number = 3;
+  int32 total_pages = 4;
+}
+
+message VehicleHealthMetricsRequest {
+  string vehicle_id = 1;
+}
+
+message VehicleHealthMetricsResponse {
+  string vehicle_id = 1;
+  double overall_health_score = 2;
+  uint64 last_maintenance_date = 3;
+  uint64 next_maintenance_due = 4;
+  int32 maintenance_events_count = 5;
+  repeated ComponentHealth component_health = 6;
+}
+
+message ComponentHealth {
+  string component_name = 1;
+  double health_score = 2;
+  string status = 3;
+  uint64 last_checked = 4;
+}
+
+message MaintenanceReportRequest {
+  string fleet_id = 1;
+  uint64 start_date = 2;
+  uint64 end_date = 3;
+  string report_format = 4; // PDF, CSV, JSON
+}
+
+message MaintenanceReportResponse {
+  bool success = 1;
+  string report_url = 2;
+  uint64 expiry_time = 3;
+}
+
+message MaintenanceAlertSubscriptionRequest {
+  string subscriber_id = 1;
+  repeated string vehicle_ids = 2; // Empty means all vehicles
+  repeated MaintenanceAlertType alert_types = 3;
+}
+
+enum MaintenanceAlertType {
+  DUE_SOON = 0;
+  OVERDUE_ = 1;
+  EMERGENCY_REQUIRED = 2;
+  PART_REPLACEMENT_NEEDED = 3;
+  COMPLETED_ = 4;
+}
+
+message MaintenanceAlert {
+  string alert_id = 1;
+  string vehicle_id = 2;
+  MaintenanceAlertType alert_type = 3;
+  string message = 4;
+  uint64 timestamp = 5;
+  int32 severity = 6; // 1-5, with 5 being most severe
+  MaintenanceTask related_task = 7;
+}
+
+message RequiredPart {
+ string id = 1;
+  string part_id = 2;
+  string part_name = 3;
+  int32 quantity = 4;
+}
