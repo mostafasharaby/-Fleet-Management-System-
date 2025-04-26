@@ -1,0 +1,33 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>161d60e2-0a52-4a41-ae56-9ad8c50027c6</UserSecretsId>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <DockerfileContext>..\..\..</DockerfileContext>
+  </PropertyGroup>
+
+	
+  <ItemGroup>
+    <Protobuf Include="Protos\maintenance.proto" GrpcServices="Server" />
+  </ItemGroup>
+
+	
+	<ItemGroup>
+		<PackageReference Include="Grpc.AspNetCore" Version="2.57.0" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Grpc.AspNetCore.Server.Reflection" Version="2.70.0" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+	</ItemGroup>
+
+	
+	<ItemGroup>
+	  <ProjectReference Include="..\MaintenanceService.Application\MaintenanceService.Application.csproj" />
+	</ItemGroup>
+	
+</Project>
