@@ -1,0 +1,142 @@
+syntax = "proto3";
+
+option csharp_namespace = "NotificationService.API.Protos";
+
+package notification;
+import "google/protobuf/timestamp.proto";
+
+
+service NotificationService {
+  // Send a notification to a user or group of users
+  rpc SendNotification (SendNotificationRequest) returns (SendNotificationResponse);
+  
+  // Create a notification template
+  rpc CreateTemplate (CreateTemplateRequest) returns (CreateTemplateResponse);
+  
+  // Get notification history for a user
+  rpc GetNotificationHistory (GetNotificationHistoryRequest) returns (GetNotificationHistoryResponse);
+  
+  // Mark notifications as read
+  rpc MarkAsRead (MarkAsReadRequest) returns (MarkAsReadResponse);
+  
+  // Subscribe to notifications (streaming)
+  rpc SubscribeToNotifications (SubscriptionRequest) returns (stream NotificationMessage);
+}
+
+// Notification types
+enum NotificationType {
+  UNKNOWN = 0;
+  VEHICLE_ALERT = 1;
+  MAINTENANCE_REMINDER = 2;
+  ROUTE_UPDATE = 3;
+  DRIVER_ASSIGNMENT = 4;
+  SYSTEM_ALERT = 5;
+  CUSTOM = 6;
+}
+
+// Notification priority levels
+enum NotificationPriority {
+  NORMAL = 0;
+  HIGH = 1;
+  URGENT = 2;
+}
+
+// Notification channels
+enum NotificationChannel {
+  ALL = 0;
+  EMAIL = 1;
+  SMS = 2;
+  PUSH = 3;
+  IN_APP = 4;
+}
+
+// Request to send a notification
+message SendNotificationRequest {
+  repeated string recipient_ids = 1;
+  NotificationType type = 2;
+  NotificationPriority priority = 3;
+  string title = 4;
+  string body = 5;
+  map<string, string> metadata = 6;
+  repeated NotificationChannel channels = 7;
+  string template_id = 8;
+  map<string, string> template_data = 9;
+}
+
+// Response after sending a notification
+message SendNotificationResponse {
+  bool success = 1;
+  string notification_id = 2;
+  repeated string failed_recipients = 3;
+  string error_message = 4;
+}
+
+// Request to create a notification template
+message CreateTemplateRequest {
+  string name = 1;
+  string description = 2;
+  NotificationType type = 3;
+  string title_template = 4;
+  string body_template = 5;
+  map<string, string> default_metadata = 6;
+}
+
+// Response after creating a template
+message CreateTemplateResponse {
+  bool success = 1;
+  string template_id = 2;
+  string error_message = 3;
+}
+
+// Request to get notification history
+message GetNotificationHistoryRequest {
+  string user_id = 1;
+  int32 page = 2;
+  int32 page_size = 3;
+  bool include_read = 4;
+  NotificationType filter_type = 5;
+  int64 from_timestamp = 6;
+  int64 to_timestamp = 7;
+}
+
+// Response containing notification history
+message GetNotificationHistoryResponse {
+  repeated NotificationMessage notifications = 1;
+  int32 total_count = 2;
+  int32 unread_count = 3;
+}
+
+// Request to mark notifications as read
+message MarkAsReadRequest {
+  repeated string notification_ids = 1;
+  string user_id = 2;
+  bool mark_all = 3;
+}
+
+// Response after marking notifications as read
+message MarkAsReadResponse {
+  bool success = 1;
+  int32 updated_count = 2;
+  string error_message = 3;
+}
+
+// Request to subscribe to notifications
+message SubscriptionRequest {
+  string user_id = 1;
+  repeated NotificationType types = 2;
+  NotificationPriority min_priority = 3;
+}
+
+// Notification message
+message NotificationMessage {
+  string notification_id = 1;
+  string recipient_id = 2;
+  NotificationType type = 3;
+  NotificationPriority priority = 4;
+  string title = 5;
+  string body = 6;
+  map<string, string> metadata = 7;
+  int64 created_timestamp = 8;
+  bool is_read = 9;
+  repeated NotificationChannel sent_via = 10;
+}
