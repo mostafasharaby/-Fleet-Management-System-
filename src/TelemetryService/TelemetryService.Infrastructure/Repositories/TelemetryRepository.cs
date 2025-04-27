@@ -24,7 +24,7 @@ namespace TelemetryService.Infrastructure.Repositories
             return await _dbContext.TelemetryData
                 .Where(t => t.VehicleId == vehicleId)
                 .OrderByDescending(t => t.Timestamp)
-                .Take(limit)
+                .Take(limit) // ex: if 1 => then largest timestamp
                 .ToListAsync();
         }
 
@@ -50,7 +50,7 @@ namespace TelemetryService.Infrastructure.Repositories
 
         public async Task<IEnumerable<TelemetryData>> GetLatestForAllVehiclesAsync()
         {
-            // This query gets the latest telemetry data for each vehicle
+            // large timestamp for each unique vehicle ID 
             var latestTelemetryQuery = from t in _dbContext.TelemetryData
                                        group t by t.VehicleId into g
                                        select g.OrderByDescending(t => t.Timestamp).FirstOrDefault();
