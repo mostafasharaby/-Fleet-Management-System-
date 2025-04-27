@@ -67,8 +67,8 @@ namespace TelemetryService.Application.Services
                     throw new KeyNotFoundException($"Alert threshold with ID {alertThresholdDto.Id} not found");
                 }
 
-                var updatedThreshold = _mapper.Map<AlertThreshold>(alertThresholdDto);
-                await _alertThresholdRepository.UpdateAsync(updatedThreshold);
+                _mapper.Map(alertThresholdDto, existingThreshold);
+                await _alertThresholdRepository.UpdateAsync(existingThreshold);
             }
             catch (Exception ex)
             {
