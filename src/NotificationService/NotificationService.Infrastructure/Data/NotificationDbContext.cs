@@ -1,9 +1,31 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
+using Microsoft.Extensions.Configuration;
 using NotificationService.Domain.Enums;
 using NotificationService.Domain.Models;
-
+using NotificationService.Infrastructure.Outbox;
 namespace NotificationService.Infrastructure.Data
 {
+    public class NotificationDbContextFactory : IDesignTimeDbContextFactory<NotificationDbContext>
+    {
+        public NotificationDbContext CreateDbContext(string[] args)
+        {
+            // Get the configuration from appsettings.json
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "NotificationService.API");
+
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(basePath)
+                .AddJsonFile("appsettings.json", optional: false)
+                .Build();
+
+            var builder = new DbContextOptionsBuilder<NotificationDbContext>();
+            var connectionString = configuration.GetConnectionString("NotificationConnection");
+
+            builder.UseSqlServer(connectionString);
+
+            return new NotificationDbContext(builder.Options);
+        }
+    }
     public class NotificationDbContext : DbContext
     {
         public NotificationDbContext(DbContextOptions<NotificationDbContext> options)
