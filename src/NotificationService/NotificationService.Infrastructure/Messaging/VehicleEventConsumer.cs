@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using NotificationService.Application.Interfaces;
 using NotificationService.Domain.Enums;
 using System.Text.Json;
 

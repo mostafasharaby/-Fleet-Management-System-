@@ -109,7 +109,7 @@ namespace NotificationService.Infrastructure.Repositories
 
             if (!markAll && notificationIds != null && notificationIds.Any())
             {
-                query = query.Where(n => notificationIds.Contains(n.Id));
+                query = query.Where(n => notificationIds.Contains(n.Id));  // if the user would not need to make all not as read so select the ids of nots only that he want to make it as read;
             }
 
             var notifications = await query.ToListAsync();

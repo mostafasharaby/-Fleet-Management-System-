@@ -36,7 +36,7 @@ namespace NotificationService.Application.Services
             List<NotificationChannel> channels = null)
         {
             var content = new NotificationContent(title, body, metadata);
-            var notification = new Notification(recipientId, type, priority, content, channels);
+            var notification = new Notification(recipientId, type, priority, content, channels, "EMERGENCY_ALERT");
 
             var result = await _notificationRepository.AddAsync(notification);
 

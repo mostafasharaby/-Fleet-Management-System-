@@ -1,14 +1,37 @@
 ﻿using NotificationService.API.Services;
+using NotificationService.Application;
+using NotificationService.Infrastructure;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddGrpc();
+
+builder.Services.AddGrpc(option => option.EnableDetailedErrors = true);
+builder.Services.AddGrpcReflection();
+
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddNotificationInfrastructure(builder.Configuration);
+builder.Services.AddNotificationApplication();
+builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
+app.UseRouting();
+app.UseEndpoints(endpoint =>
+{
+    endpoint.MapGrpcService<NotificationGrpcService>();
+    if (app.Environment.IsDevelopment())
+    {
+        endpoint.MapGrpcReflectionService();
+    }
+    endpoint.MapControllers();
+});
 app.Run();
+
+/*
+  when I say "Program.cs can reference Infrastructure for wiring",
+I mean:
+➔ It references Infrastructure and uses its extension methods
+➔ but only in Program.cs (and not anywhere else).
+*/
