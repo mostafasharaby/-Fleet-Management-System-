@@ -1,4 +1,4 @@
-﻿namespace Auth.Application.Response
+﻿namespace Auth.Domain.Models
 {
     public class RoleResponse
     {

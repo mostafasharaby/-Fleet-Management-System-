@@ -167,30 +167,21 @@ namespace Auth.Application.Services
             return result.Succeeded;
         }
 
-        public async Task RevokeTokenAsync(string token, string userId)
-        {
-            var refreshToken = await _refreshTokenRepository.GetByTokenAsync(token);
-            if (refreshToken != null && refreshToken.UserId == userId)
-            {
-                refreshToken.Revoke();
-                await _refreshTokenRepository.UpdateAsync(refreshToken);
-            }
-        }
+        //public async Task RevokeTokenAsync(string token, string userId)
+        //{
+        //    var refreshToken = await _refreshTokenRepository.GetByTokenAsync(token);
+        //    if (refreshToken != null && refreshToken.UserId == userId)
+        //    {
+        //        refreshToken.Revoke();
+        //        await _refreshTokenRepository.UpdateAsync(refreshToken);
+        //    }
+        //}
 
-        public async Task<bool> ValidateTokenAsync(string token)
-        {
-            return _jwtService.ValidateToken(token);
-        }
+        //public async Task<bool> ValidateTokenAsync(string token)
+        //{
+        //    return _jwtService.ValidateToken(token);
+        //}
 
-        public async Task<AppUserDto> GetUserInfoAsync(string userId)
-        {
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                throw new ApplicationException("User not found");
-            }
 
-            return _mapper.Map<AppUserDto>(user);
-        }
     }
 }

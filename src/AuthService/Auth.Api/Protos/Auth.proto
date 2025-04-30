@@ -1,0 +1,181 @@
+syntax = "proto3";
+
+option csharp_namespace = "Auth.Api.Protos";
+package Auth;
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
+
+service AuthService {
+  rpc Register(RegisterRequest) returns (RegisterResponse);
+  rpc Login(LoginRequest) returns (LoginResponse);
+  rpc RefreshToken(RefreshTokenRequest) returns (RefreshTokenResponse);
+  
+  rpc GetUser(GetUserRequest) returns (UserResponse);
+  rpc GetAllUsers(google.protobuf.Empty) returns (UsersResponse);
+  rpc DeleteUser(DeleteUserRequest) returns (DeleteUserResponse);
+}
+
+service RoleService {
+  rpc CreateRole(CreateRoleRequest) returns (CreateRoleResponse);
+  rpc GetAllRoles(google.protobuf.Empty) returns (RolesResponse);
+  
+  rpc AddUserToRole(AddUserToRoleRequest) returns (AddUserToRoleResponse);
+  rpc RemoveUserFromRole(RemoveUserFromRoleRequest) returns (RemoveUserFromRoleResponse);
+  rpc GetUserRoles(GetUserRolesRequest) returns (UserRolesResponse);
+}
+
+service ClaimsService {
+  rpc AddClaim(AddClaimRequest) returns (AddClaimResponse);
+  rpc RemoveClaim(RemoveClaimRequest) returns (RemoveClaimResponse);
+  rpc GetUserClaims(GetUserClaimsRequest) returns (UserClaimsResponse);
+}
+
+// Auth Messages
+message RegisterRequest {
+  string user_name = 1;
+  string email = 2;
+  string password = 3;
+  string phone_number = 4;
+}
+
+message RegisterResponse {
+  bool is_authenticated = 1;
+  string message = 2;
+  string user_name = 3;
+}
+
+message LoginRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  bool is_authenticated = 1;
+  string message = 2;
+  string user_name = 3;
+  string token = 4;
+  google.protobuf.Timestamp token_expiry_time = 5;
+  string refresh_token = 6;
+  google.protobuf.Timestamp refresh_token_expiry_time = 7;
+}
+
+message RefreshTokenRequest {
+  string expired_token = 1;
+  string refresh_token = 2;
+}
+
+message RefreshTokenResponse {
+  bool is_authenticated = 1;
+  string message = 2;
+  string user_name = 3;
+  string token = 4;
+  google.protobuf.Timestamp token_expiry_time = 5;
+  string refresh_token = 6;
+  google.protobuf.Timestamp refresh_token_expiry_time = 7;
+}
+
+message GetUserRequest {
+  string user_id = 1;
+}
+
+message UserResponse {
+  string id = 1;
+  string user_name = 2;
+  string email = 3;
+  string phone_number = 4;
+}
+
+message UsersResponse {
+  repeated UserResponse users = 1;
+}
+
+message DeleteUserRequest {
+  string user_id = 1;
+}
+
+message DeleteUserResponse {
+  bool success = 1;
+}
+
+// Role Messages
+message CreateRoleRequest {
+  string role_name = 1;
+}
+
+message CreateRoleResponse {
+  string id = 1;
+  string name = 2;
+  bool success = 3;
+}
+
+message RoleInfo {
+  string id = 1;
+  string name = 2;
+}
+
+message RolesResponse {
+  repeated RoleInfo roles = 1;
+}
+
+message AddUserToRoleRequest {
+  string user_id = 1;
+  string role_name = 2;
+}
+
+message AddUserToRoleResponse {
+  bool success = 1;
+}
+
+message RemoveUserFromRoleRequest {
+  string user_id = 1;
+  string role_name = 2;
+}
+
+message RemoveUserFromRoleResponse {
+  bool success = 1;
+}
+
+message GetUserRolesRequest {
+  string user_id = 1;
+}
+
+message UserRolesResponse {
+  string user_id = 1;
+  repeated RoleInfo roles = 2;
+}
+
+// Claims Messages
+message AddClaimRequest {
+  string user_id = 1;
+  string claim_type = 2;
+  string claim_value = 3;
+}
+
+message AddClaimResponse {
+  bool success = 1;
+}
+
+message RemoveClaimRequest {
+  string user_id = 1;
+  string claim_type = 2;
+  string claim_value = 3;
+}
+
+message RemoveClaimResponse {
+  bool success = 1;
+}
+
+message GetUserClaimsRequest {
+  string user_id = 1;
+}
+
+message ClaimInfo {
+  string type = 1;
+  string value = 2;
+}
+
+message UserClaimsResponse {
+  string user_id = 1;
+  repeated ClaimInfo claims = 2;
+}

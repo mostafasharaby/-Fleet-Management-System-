@@ -1,6 +1,7 @@
 ﻿using Auth.Application.Interfaces;
 using Auth.Application.Response;
 using Auth.Domain.Models;
+using Auth.Domain.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -15,12 +16,15 @@ namespace Auth.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<AppUser> _userManager;
-        private readonly AuthDbContext _context;
-        public JwtService(IConfiguration configuration, UserManager<AppUser> userManager, AuthDbContext context)
+        //  private readonly AuthDbContext _context;                 // to follow DDD the App layer should not depend on Infrastruction layer so i make IUserRepo , IRefreshTokenRepo in Domain => :)
+        private readonly IUserRepository _userRepository;
+        private readonly IRefreshTokenRepository _refreshTokenRepository;
+        public JwtService(IConfiguration configuration, UserManager<AppUser> userManager, IUserRepository userService, IRefreshTokenRepository refreshTokenRepository)
         {
             _configuration = configuration;
             _userManager = userManager;
-            _context = context;
+            _userRepository = userService;
+            _refreshTokenRepository = refreshTokenRepository;
         }
 
         public async Task<AuthResponse> GenerateJwtToken(AppUser user)
@@ -131,7 +135,7 @@ namespace Auth.Application.Services
 
                 storedToken.IsUsed = true;
                 storedToken.ReplacedByToken = GenerateRefreshToken();
-                await _context.SaveChangesAsync();
+                await _refreshTokenRepository.UpdateRefreshTokenAsync(storedToken);
 
                 var refreshTokenExpiry = DateTime.UtcNow.AddMinutes(2);
                 var (newAccessToken, newAccessTokenExpiry) = CreateJwtToken(principal.Claims, GetSigningCredentials(), refreshTokenExpiry);
@@ -165,30 +169,33 @@ namespace Auth.Application.Services
             user.TokenExpiryTime = accessTokenExpiry;
             user.RefreshToken = refreshToken;
             user.RefreshTokenExpiryTime = refreshTokenExpiry;
-            await _userManager.UpdateAsync(user);
+            await _userRepository.UpdateAsync(user);
         }
         private async Task StoreRefreshToken(AppUser user, string refreshToken, DateTime refreshTokenExpiry)
         {
             var refreshTokenEntity = new RefreshToken(refreshToken, refreshTokenExpiry, false, false, user.Id);
 
-            _context.RefreshTokens.Add(refreshTokenEntity);
-            await _context.SaveChangesAsync();
+            //_context.RefreshTokens.Add(refreshTokenEntity);
+            //await _context.SaveChangesAsync();
+            await _refreshTokenRepository.StoreRefreshTokenAsync(user.Id, refreshToken, refreshTokenExpiry);
         }
 
         public async Task RevokeRefreshTokenAsync(string token)
         {
-            var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == token);
-            if (refreshToken != null)
-            {
-                refreshToken.IsRevoked = true;
-                await _context.SaveChangesAsync();
-            }
+            //var refreshToken = await _context.RefreshTokens.FirstOrDefaultAsync(rt => rt.Token == token);
+            //if (refreshToken != null)
+            //{
+            //    refreshToken.IsRevoked = true;
+            //    await _context.SaveChangesAsync();
+            //}
+            await _refreshTokenRepository.RevokeRefreshTokenAsync(token);
         }
         private async Task<RefreshToken> ValidateRefreshToken(AppUser user, string refreshToken)
         {
-            var storedToken = await _context.RefreshTokens
-                .FirstOrDefaultAsync(rt => rt.Token == refreshToken && rt.AppUserId == user.Id);
+            //var storedToken = await _context.RefreshTokens
+            //    .FirstOrDefaultAsync(rt => rt.Token == refreshToken && rt.AppUserId == user.Id);
 
+            var storedToken = await _refreshTokenRepository.GetRefreshTokenAsync(refreshToken, user.Id);
             if (storedToken == null || storedToken.IsUsed || storedToken.IsRevoked || storedToken.ExpiryTime <= DateTime.UtcNow)
                 throw new SecurityTokenException("Invalid or expired refresh token.");
 

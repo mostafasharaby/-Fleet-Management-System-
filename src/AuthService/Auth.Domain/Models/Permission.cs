@@ -2,10 +2,10 @@
 {
     public class Permission
     {
-        public Guid Id { get; private set; }
-        public string Name { get; private set; }
-        public string Resource { get; private set; }
-        public string Action { get; private set; }
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Resource { get; set; }
+        public string Action { get; set; }
 
         public Permission(string name, string resource, string action)
         {
