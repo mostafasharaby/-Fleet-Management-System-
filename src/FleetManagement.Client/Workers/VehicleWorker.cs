@@ -2,14 +2,14 @@ using FleetManagement.Client.Services;
 using Grpc.Core;
 using VehicleService.API.Protos;
 
-namespace FleetManagement.Client
+namespace FleetManagement.Client.Workers
 {
-    public class Worker : BackgroundService
+    public class VehicleWorker : BackgroundService
     {
-        private readonly ILogger<Worker> _logger;
+        private readonly ILogger<VehicleWorker> _logger;
         private readonly VehicleServiceClient _vehicleServiceClient;
 
-        public Worker(VehicleServiceClient vehicleServiceClient, ILogger<Worker> logger)
+        public VehicleWorker(VehicleServiceClient vehicleServiceClient, ILogger<VehicleWorker> logger)
         {
             _vehicleServiceClient = vehicleServiceClient;
             _logger = logger;

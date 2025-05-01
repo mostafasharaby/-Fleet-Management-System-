@@ -22,6 +22,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="..\DriverService\DriverService.API\Protos\DriverService.proto" GrpcServices="Client">
+      <Link>Protos\DriverService.proto</Link>
+    </Protobuf>
     <Protobuf Include="..\VehicleService\VehicleService.API\Protos\VehicleService.proto" GrpcServices="Client">
       <Link>Protos\VehicleService.proto</Link>
     </Protobuf>
