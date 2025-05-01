@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DriverService.API.Protos;
 using DriverService.Application.Services;
 using DriverService.Domain.Models;
 using Grpc.Core;

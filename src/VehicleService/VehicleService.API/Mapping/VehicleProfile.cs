@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using VehicleService.API.Protos;
 
 namespace VehicleService.API.Mapping
 {

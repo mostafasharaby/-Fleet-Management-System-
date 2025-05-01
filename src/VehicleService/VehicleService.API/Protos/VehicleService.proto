@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "VehicleService.API";
+option csharp_namespace = "VehicleService.API.Protos";
 
 
 package vehicle;

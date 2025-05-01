@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Grpc.Core;
+using VehicleService.API.Protos;
 using VehicleService.Application.Services;
 
 namespace VehicleService.API.Services
 {
-    public class GrpcVehicleService : VehicleService.VehicleServiceBase
+    public class GrpcVehicleService : Protos.VehicleService.VehicleServiceBase
     {
         private readonly IVehicleService _vehicleService;
         private readonly ILogger<GrpcVehicleService> _logger;
