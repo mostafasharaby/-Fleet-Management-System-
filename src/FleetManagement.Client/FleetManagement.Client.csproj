@@ -1,32 +1,29 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
+<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <UserSecretsId>dotnet-FleetManagement.Client-0e54cd31-20f5-4dfa-8547-797a27996d89</UserSecretsId>
+    <UserSecretsId>dotnet-FleetManagement.Client-82e227d5-69fa-4de2-8901-fbf91a7475dd</UserSecretsId>
     <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Google.Protobuf" Version="3.21.5" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.70.0" />
+    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
     <PackageReference Include="Grpc.Tools" Version="2.49.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.15">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
   </ItemGroup>
-	<ItemGroup>
-		<Protobuf Include="..\VehicleService\VehicleService.API\Protos\VehicleService.proto" GrpcServices="Client">
-			<Link>Protos\VehicleService.proto</Link>
-		</Protobuf>
-	</ItemGroup>
+
+  <ItemGroup>
+    <Protobuf Include="..\VehicleService\VehicleService.API\Protos\VehicleService.proto" GrpcServices="Client">
+      <Link>Protos\VehicleService.proto</Link>
+    </Protobuf>
+  </ItemGroup>
 </Project>
