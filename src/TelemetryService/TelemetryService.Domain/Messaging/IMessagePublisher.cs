@@ -1,4 +1,4 @@
-﻿namespace TelemetryService.Infrastructure.Messaging
+﻿namespace TelemetryService.Domain.Messaging
 {
     public interface IMessagePublisher
     {

@@ -7,7 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MaintenanceService.Infrastructure\MaintenanceService.Infrastructure.csproj" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MaintenanceService.Domain\MaintenanceService.Domain.csproj" />
   </ItemGroup>
 
 </Project>

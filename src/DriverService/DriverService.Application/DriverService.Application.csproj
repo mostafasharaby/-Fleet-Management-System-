@@ -8,8 +8,11 @@
 
   <ItemGroup>
 	  <PackageReference Include="AutoMapper" Version="14.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
+  </ItemGroup>
 
-	  <ProjectReference Include="..\DriverService.Infrastructure\DriverService.Infrastructure.csproj" />
+  <ItemGroup>
+    <ProjectReference Include="..\DriverService.Domain\DriverService.Domain.csproj" />
   </ItemGroup>
 
 </Project>
