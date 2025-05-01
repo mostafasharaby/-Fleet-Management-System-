@@ -166,22 +166,5 @@ namespace Auth.Application.Services
             var result = await _userManager.DeleteAsync(user);
             return result.Succeeded;
         }
-
-        //public async Task RevokeTokenAsync(string token, string userId)
-        //{
-        //    var refreshToken = await _refreshTokenRepository.GetByTokenAsync(token);
-        //    if (refreshToken != null && refreshToken.UserId == userId)
-        //    {
-        //        refreshToken.Revoke();
-        //        await _refreshTokenRepository.UpdateAsync(refreshToken);
-        //    }
-        //}
-
-        //public async Task<bool> ValidateTokenAsync(string token)
-        //{
-        //    return _jwtService.ValidateToken(token);
-        //}
-
-
     }
 }

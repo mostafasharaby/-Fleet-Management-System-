@@ -10,7 +10,6 @@ builder.Services.AddAuthInfrastructure(builder.Configuration);
 builder.Services.AddAuthApplication();
 
 builder.Services.AddControllers();
-
 var app = builder.Build();
 
 //app.MapGrpcService<AuthGrpcService>();
@@ -19,10 +18,13 @@ var app = builder.Build();
 
 
 app.UseRouting();
+
+app.UseAuthentication();
+app.UseAuthorization();
 app.UseEndpoints(endpoint =>
 {
     endpoint.MapGrpcService<AuthGrpcService>();
-    //endpoint.MapGrpcService<RoleGrpcService>();
+    endpoint.MapGrpcService<RoleGrpcService>();
     //endpoint.MapGrpcService<ClaimsGrpcService>();
     if (app.Environment.IsDevelopment())
     {

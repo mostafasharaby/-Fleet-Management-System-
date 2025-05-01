@@ -1,6 +1,6 @@
 ﻿using Auth.Api.Protos;
 using Auth.Application.Interfaces;
-using Auth.Domain.Repositories;
+using AutoMapper;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
@@ -10,22 +10,15 @@ namespace Auth.Api.Services
     public class AuthGrpcService : AuthService.AuthServiceBase
     {
         private readonly IAuthService _authService;
-        private readonly IRoleRepository _roleRepository;
-        private readonly IClaimsRepository _claimsRepository;
         private readonly ILogger<AuthGrpcService> _logger;
+        private readonly IMapper _mapper;
 
-        public AuthGrpcService(
-            IAuthService authService,
-            IRoleRepository roleService,
-            IClaimsRepository claimsService,
-            ILogger<AuthGrpcService> logger)
+        public AuthGrpcService(IAuthService authService, ILogger<AuthGrpcService> logger, IMapper mapper)
         {
             _authService = authService;
-            _roleRepository = roleService;
-            _claimsRepository = claimsService;
             _logger = logger;
+            _mapper = mapper;
         }
-
 
         public override async Task<LoginResponse> Login(LoginRequest request, ServerCallContext context)
         {
@@ -66,6 +59,34 @@ namespace Auth.Api.Services
             }
         }
 
+        public override async Task<RegisterResponse> Register(RegisterRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var appRequest = new Application.DTOs.RegisterRequest
+                {
+                    UserName = request.UserName,
+                    Email = request.Email,
+                    Password = request.Password,
+                    PhoneNumber = request.PhoneNumber
+                };
+                //var appRequest = _mapper.Map<Application.DTOs.RegisterRequest>(request);
+
+                var result = await _authService.RegisterAsync(appRequest);
+
+                return new RegisterResponse
+                {
+                    IsAuthenticated = result.IsAuthenticated ?? false,
+                    Message = result.Message ?? "",
+                    UserName = result.UserName ?? ""
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during gRPC register call");
+                throw new RpcException(new Status(StatusCode.Internal, "An error occurred during registration."));
+            }
+        }
 
         public override async Task<RefreshTokenResponse> RefreshToken(RefreshTokenRequest request, ServerCallContext context)
         {
