@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="MediatR" Version="12.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TelemetryService.Infrastructure\TelemetryService.Infrastructure.csproj" />
+    <ProjectReference Include="..\TelemetryService.Domain\TelemetryService.Domain.csproj" />
   </ItemGroup>
 
 </Project>

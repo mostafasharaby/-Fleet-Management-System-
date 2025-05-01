@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using TelemetryService.Domain.Messaging;
 using TelemetryService.Domain.Repositories;
 using TelemetryService.Infrastructure.Caching;
 using TelemetryService.Infrastructure.Data;

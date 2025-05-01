@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.Extensions.Logging;
 using TelemetryService.Domain.Events;
-using TelemetryService.Infrastructure.Messaging;
+using TelemetryService.Domain.Messaging;
 namespace TelemetryService.Application.EventHandlers
 {
     public class TelemetryEventHandler :
