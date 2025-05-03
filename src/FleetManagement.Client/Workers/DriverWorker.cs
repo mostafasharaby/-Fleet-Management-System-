@@ -21,23 +21,22 @@ namespace FleetManagement.Client.Workers
         {
             if (!stoppingToken.IsCancellationRequested)
             {
-                // Uncomment methods to test specific operations
-                await GetDriverById();
-                await ListDrivers();
-                await CreateDriver();
-                await UpdateDriver();
-                await DeleteDriver();
-                await GetDriverAssignments();
-                await AssignVehicle();
-                await CompleteAssignment();
-                await GetDriverAvailability();
-                await ScheduleDriver();
+                //await GetDriverById();
+                //await ListDrivers();
+                //await CreateDriver();
+                //await UpdateDriver();
+                //await DeleteDriver();
+                //await GetDriverAssignments();
+                //await AssignVehicle();
+                //await CompleteAssignment();
+                //await GetDriverAvailability();
+                //await ScheduleDriver();
             }
         }
 
         private async Task GetDriverById()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             try
             {
                 _logger.LogInformation($"Fetching driver with ID: {driverId}");
@@ -118,7 +117,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task UpdateDriver()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             try
             {
                 _logger.LogInformation($"Updating driver with ID: {driverId}");
@@ -156,7 +155,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task DeleteDriver()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             try
             {
                 _logger.LogInformation($"Deleting driver with ID: {driverId}");
@@ -180,7 +179,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task GetDriverAssignments()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             DateTime fromDate = DateTime.UtcNow.AddDays(-7);
             DateTime toDate = DateTime.UtcNow.AddDays(7);
 
@@ -217,8 +216,8 @@ namespace FleetManagement.Client.Workers
 
         private async Task AssignVehicle()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
-            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C"); // Replace with a valid vehicle ID
+            Guid driverId = Guid.NewGuid();
+            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C");
             DateTime startTime = DateTime.UtcNow;
             DateTime endTime = DateTime.UtcNow.AddDays(1);
             string notes = "Assigned for delivery";
@@ -317,7 +316,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task ScheduleDriver()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             var scheduleSlots = new List<(DateTime StartTime, DateTime EndTime, ScheduleType Type, string Notes)>
             {
                 (DateTime.UtcNow.AddDays(1), DateTime.UtcNow.AddDays(1).AddHours(8), ScheduleType.Work, "Morning shift"),

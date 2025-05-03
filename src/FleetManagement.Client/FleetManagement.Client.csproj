@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="14.0.0" />
     <PackageReference Include="Google.Protobuf" Version="3.21.5" />
     <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
     <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
@@ -22,8 +23,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\RouteService\RouteService.Domain\RouteService.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Protobuf Include="..\DriverService\DriverService.API\Protos\DriverService.proto" GrpcServices="Client">
       <Link>Protos\DriverService.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\RouteService\RouteService.API\Protos\RouteService.proto" GrpcServices="Client">
+      <Link>Protos\RouteService.proto</Link>
     </Protobuf>
     <Protobuf Include="..\VehicleService\VehicleService.API\Protos\VehicleService.proto" GrpcServices="Client">
       <Link>Protos\VehicleService.proto</Link>

@@ -6,7 +6,7 @@ using Grpc.Core;
 
 namespace DriverService.API.Services
 {
-    public class GrpcDriverService : DriverService.DriverServiceBase
+    public class GrpcDriverService : Protos.DriverService.DriverServiceBase
     {
         private readonly IDriverService _driverService;
         private readonly ILogger<GrpcDriverService> _logger;

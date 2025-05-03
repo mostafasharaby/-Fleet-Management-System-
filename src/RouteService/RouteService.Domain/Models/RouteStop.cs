@@ -4,21 +4,21 @@ namespace RouteService.Domain.Models
 {
     public class RouteStop
     {
-        public Guid Id { get; private set; }
-        public Guid RouteId { get; private set; }
-        public int SequenceNumber { get; private set; }
-        public string Name { get; private set; }
-        public string Address { get; private set; }
-        public double Latitude { get; private set; }
-        public double Longitude { get; private set; }
-        public DateTime PlannedArrivalTime { get; private set; }
-        public DateTime? ActualArrivalTime { get; private set; }
-        public DateTime? DepartureTime { get; private set; }
-        public StopStatus Status { get; private set; }
-        public int EstimatedDurationMinutes { get; private set; }
-        public string Notes { get; private set; }
+        public Guid Id { get; set; }
+        public Guid RouteId { get; set; }
+        public int SequenceNumber { get; set; }
+        public string Name { get; set; }
+        public string Address { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
+        public DateTime PlannedArrivalTime { get; set; }
+        public DateTime? ActualArrivalTime { get; set; }
+        public DateTime? DepartureTime { get; set; }
+        public StopStatus Status { get; set; }
+        public int EstimatedDurationMinutes { get; set; }
+        public string Notes { get; set; }
 
-        private RouteStop() { }
+        public RouteStop() { }
 
         public RouteStop(
             int sequenceNumber,

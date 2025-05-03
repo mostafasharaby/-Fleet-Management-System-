@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using RouteService.API.Protos;
 using RouteService.Domain.Enums;
 using RouteService.Domain.Models;
 
@@ -25,7 +26,7 @@ namespace RouteService.API.Mapping
                 .ForMember(dest => dest.DriverId, opt => opt.MapFrom(src => Guid.Parse(src.DriverId)))
                 .ForMember(dest => dest.StartTime, opt => opt.MapFrom(src => DateTime.Parse(src.StartTime)))
                 .ForMember(dest => dest.EndTime, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.EndTime) ? (DateTime?)null : DateTime.Parse(src.EndTime)))
-                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<RouteStatus>(src.Status, true)))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => Enum.Parse<Protos.RouteStatus>(src.Status, true)))
                 .ForMember(dest => dest.CreatedAt, opt => opt.MapFrom(src => DateTime.Parse(src.CreatedAt)))
                 .ForMember(dest => dest.UpdatedAt, opt => opt.MapFrom(src => string.IsNullOrEmpty(src.UpdatedAt) ? (DateTime?)null : DateTime.Parse(src.UpdatedAt)))
                 .ForMember(dest => dest.EstimatedDuration, opt => opt.MapFrom(src => TimeSpan.FromMinutes(src.EstimatedDurationMinutes)))

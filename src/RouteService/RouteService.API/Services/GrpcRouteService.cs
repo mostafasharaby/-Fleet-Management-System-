@@ -1,11 +1,12 @@
 ﻿using AutoMapper;
 using Grpc.Core;
+using RouteService.API.Protos;
 using RouteService.Application.Services;
 using RouteService.Domain.Models;
 
 namespace RouteService.API.Services
 {
-    public class GrpcRouteService : RouteService.RouteServiceBase
+    public class GrpcRouteService : Protos.RouteService.RouteServiceBase
     {
         private readonly IRouteService _routeService;
         private readonly IMapper _mapper;
@@ -113,27 +114,27 @@ namespace RouteService.API.Services
             }
         }
 
-        //public override async Task<RoutesResponse> GetRoutesByStatus(GetRoutesByStatusRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var routes = await _routeService.GetRoutesByStatusAsync(request.Status);
+        public override async Task<RoutesResponse> GetRoutesByStatus(GetRoutesByStatusRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var routes = await _routeService.GetRoutesByStatusAsync(request.Status);
 
-        //        var response = new RoutesResponse();
-        //        response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
+                var response = new RoutesResponse();
+                response.Routes.AddRange(_mapper.Map<List<RouteMessage>>(routes));
 
-        //        return response;
-        //    }
-        //    catch (ArgumentException ex)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error retrieving routes by status");
-        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error retrieving routes"));
-        //    }
-        //}
+                return response;
+            }
+            catch (ArgumentException ex)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving routes by status");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal error retrieving routes"));
+            }
+        }
 
         public override async Task<RoutesResponse> GetRoutesByDateRange(GetRoutesByDateRangeRequest request, ServerCallContext context)
         {
@@ -394,37 +395,37 @@ namespace RouteService.API.Services
             }
         }
 
-        //public override async Task<RouteResponse> UpdateStopStatus(UpdateStopStatusRequest request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var routeId = Guid.Parse(request.RouteId);
-        //        var stopId = Guid.Parse(request.StopId);
+        public override async Task<RouteResponse> UpdateStopStatus(UpdateStopStatusRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var routeId = Guid.Parse(request.RouteId);
+                var stopId = Guid.Parse(request.StopId);
 
-        //        var route = await _routeService.UpdateStopStatusAsync(routeId, stopId, request.Status);
+                var getStop = await _routeService.GetStopAsync(Guid.Parse(request.StopId));
+                var route = await _routeService.UpdateStopAsync(routeId, getStop);
 
-        //        return _mapper.Map<RouteResponse>(route);
-        //    }
-        //    catch (FormatException)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID format"));
-        //    }
-        //    catch (KeyNotFoundException ex)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
-        //    }
-        //    catch (InvalidOperationException ex)
-        //    {
-        //        throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error updating stop status");
-        //        throw new RpcException(new Status(StatusCode.Internal, "Internal error updating stop status"));
-        //    }
-        //}
+                return _mapper.Map<RouteResponse>(route);
+            }
+            catch (FormatException)
+            {
+                throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid ID format"));
+            }
+            catch (KeyNotFoundException ex)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, ex.Message));
+            }
+            catch (InvalidOperationException ex)
+            {
+                throw new RpcException(new Status(StatusCode.FailedPrecondition, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating stop status");
+                throw new RpcException(new Status(StatusCode.Internal, "Internal error updating stop status"));
+            }
+        }
 
-        //#region Helper Methods
 
         //private RouteMessage MapToRouteMessage(RouteDto routeDto)
         //{

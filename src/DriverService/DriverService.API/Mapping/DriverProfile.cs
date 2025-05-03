@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DriverService.API.Protos;
 using DriverService.Domain.Models;
 
 namespace DriverService.API.Mapping

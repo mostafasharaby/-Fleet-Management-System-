@@ -19,13 +19,13 @@ namespace FleetManagement.Client.Workers
         {
             if (!stoppingToken.IsCancellationRequested)
             {
-                await GetVehiclesByID();
-                await GetListOfVehicles();
-                await CreateVehicle();
-                await UpdateVehicle();
-                //  await DeleteVehicle();
-                await AssignVehicleToDriver();
-                await StreamVehicleLocation(stoppingToken);
+                //await GetVehiclesByID();
+                //await GetListOfVehicles();
+                //await CreateVehicle();
+                //await UpdateVehicle();
+                //await DeleteVehicle();
+                //await AssignVehicleToDriver();
+                //await StreamVehicleLocation(stoppingToken);
             }
         }
 

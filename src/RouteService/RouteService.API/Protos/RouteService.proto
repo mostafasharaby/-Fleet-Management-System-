@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "RouteService.API";
+option csharp_namespace = "RouteService.API.Protos";
 
 package route;
 
