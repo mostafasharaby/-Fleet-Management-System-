@@ -9,29 +9,37 @@
     <DockerfileContext>..\..</DockerfileContext>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="14.0.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.21.5" />
-    <PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
-    <PackageReference Include="Grpc.Net.ClientFactory" Version="2.49.0" />
-    <PackageReference Include="Grpc.Tools" Version="2.49.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="14.0.0" />
+		<PackageReference Include="Google.Protobuf" Version="3.27.0" />
+		<PackageReference Include="Grpc.Net.Client" Version="2.57.0" />
+		<PackageReference Include="Grpc.Net.ClientFactory" Version="2.57.0" />
+		<PackageReference Include="Grpc.Tools" Version="2.57.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.1" />
+		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.2" />
+	</ItemGroup>
 
-  <ItemGroup>
+
+	<ItemGroup>
     <ProjectReference Include="..\RouteService\RouteService.Domain\RouteService.Domain.csproj" />
+    <ProjectReference Include="..\TelemetryService\TelemetryService.API\TelemetryService.API.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Protobuf Include="..\DriverService\DriverService.API\Protos\DriverService.proto" GrpcServices="Client">
       <Link>Protos\DriverService.proto</Link>
     </Protobuf>
+    <Protobuf Include="..\MaintenanceService\MaintenanceService.API\Protos\maintenance.proto" GrpcServices="Client">
+      <Link>Protos\maintenance.proto</Link>
+    </Protobuf>
     <Protobuf Include="..\RouteService\RouteService.API\Protos\RouteService.proto" GrpcServices="Client">
       <Link>Protos\RouteService.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\TelemetryService\TelemetryService.API\Protos\telemetry.proto" GrpcServices="Client">
+      <Link>Protos\telemetry.proto</Link>
     </Protobuf>
     <Protobuf Include="..\VehicleService\VehicleService.API\Protos\VehicleService.proto" GrpcServices="Client">
       <Link>Protos\VehicleService.proto</Link>

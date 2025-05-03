@@ -18,7 +18,7 @@ namespace FleetManagement.Client.Workers
         {
             if (!stoppingToken.IsCancellationRequested)
             {
-                await GetRouteById();
+                //await GetRouteById();
                 //await GetAllRoutes();
                 //await GetRoutesByVehicle();
                 //await GetRoutesByDriver();
@@ -95,7 +95,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task GetRoutesByVehicle()
         {
-            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C"); // Replace with a valid vehicle ID
+            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C");
             try
             {
                 _logger.LogInformation($"Fetching routes for vehicle ID: {vehicleId}");
@@ -128,7 +128,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task GetRoutesByDriver()
         {
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid driverId = Guid.NewGuid();
             try
             {
                 _logger.LogInformation($"Fetching routes for driver ID: {driverId}");
@@ -161,7 +161,7 @@ namespace FleetManagement.Client.Workers
 
         private async Task GetRoutesByStatus()
         {
-            string status = "Active"; // Replace with a valid RouteStatus value (e.g., "Active", "Completed")
+            string status = "Active";
             try
             {
                 _logger.LogInformation($"Fetching routes with status: {status}");
@@ -230,8 +230,8 @@ namespace FleetManagement.Client.Workers
 
         private async Task CreateRoute()
         {
-            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C"); // Replace with a valid vehicle ID
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C");
+            Guid driverId = Guid.NewGuid();
             var stops = new List<RouteStop>
             {
                 new RouteStop
@@ -278,8 +278,8 @@ namespace FleetManagement.Client.Workers
         private async Task UpdateRoute()
         {
             Guid routeId = Guid.NewGuid();
-            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C"); // Replace with a valid vehicle ID
-            Guid driverId = Guid.NewGuid(); // Replace with a valid driver ID
+            Guid vehicleId = Guid.Parse("8DB05DA5-9AE5-46D7-BC3C-10F260EAB20C");
+            Guid driverId = Guid.NewGuid();
 
             try
             {

@@ -24,7 +24,7 @@ namespace TelemetryService.Infrastructure.Repositories
             return await _dbContext.TelemetryData
                 .Where(t => t.VehicleId == vehicleId)
                 .OrderByDescending(t => t.Timestamp)
-                .Take(limit) // ex: if 1 => then largest timestamp
+                .Take(limit)
                 .ToListAsync();
         }
 

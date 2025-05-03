@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using MaintenanceService.API.Protos;
 using MaintenanceService.Domain.Models;
 
 namespace MaintenanceService.API.Mapping
@@ -7,7 +8,7 @@ namespace MaintenanceService.API.Mapping
     {
         public MaintenanceProfile()
         {
-            CreateMap<Domain.Models.MaintenanceTask, MaintenanceTask>()
+            CreateMap<Domain.Models.MaintenanceTask, Protos.MaintenanceTask>()
                 .ForMember(dest => dest.TaskId, opt => opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(dest => dest.VehicleId, opt => opt.MapFrom(src => src.VehicleId.ToString()))
                 .ForMember(dest => dest.TaskDescription, opt => opt.MapFrom(src => src.Description))
@@ -23,7 +24,7 @@ namespace MaintenanceService.API.Mapping
             CreateMap<MaintenanceScheduleResponse, Domain.Models.MaintenanceTask>();
             CreateMap<MaintenanceScheduleResponse, Domain.Models.MaintenanceTask>().ReverseMap();
 
-            CreateMap<MaintenanceTask, Domain.Models.MaintenanceTask>()
+            CreateMap<Protos.MaintenanceTask, Domain.Models.MaintenanceTask>()
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => Guid.Parse(src.TaskId)))
                 .ForMember(dest => dest.VehicleId, opt => opt.MapFrom(src => Guid.Parse(src.VehicleId)))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.TaskDescription))
@@ -39,7 +40,7 @@ namespace MaintenanceService.API.Mapping
                 .ForMember(dest => dest.CompletedAt, opt => opt.Ignore()) // Set in domain logic
                 .ForMember(dest => dest.DomainEvents, opt => opt.Ignore()); // Handled by domain logic
 
-            CreateMap<Domain.Models.RequiredPart, RequiredPart>()
+            CreateMap<Domain.Models.RequiredPart, Protos.RequiredPart>()
                 .ForMember(dest => dest.PartId, opt => opt.MapFrom(src => src.PartId))
                 .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.Id))
                 .ForMember(dest => dest.PartName, opt => opt.MapFrom(src => src.PartName))
@@ -52,7 +53,7 @@ namespace MaintenanceService.API.Mapping
             //    .ReverseMap();
 
             // MaintenanceEvent mappings
-            CreateMap<Domain.Models.MaintenanceEvent, MaintenanceEvent>()
+            CreateMap<Domain.Models.MaintenanceEvent, Protos.MaintenanceEvent>()
                 .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id.ToString()))
                 .ForMember(dest => dest.VehicleId, opt => opt.MapFrom(src => src.VehicleId.ToString()))
                 .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -64,7 +65,7 @@ namespace MaintenanceService.API.Mapping
                 .ForMember(dest => dest.PartsReplaced, opt => opt.MapFrom(src => src.PartsReplaced))
                 .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes));
 
-            CreateMap<Domain.Models.MaintenanceEvent, MaintenanceEvent>()
+            CreateMap<Domain.Models.MaintenanceEvent, Protos.MaintenanceEvent>()
                  .ForMember(dest => dest.EventId, opt => opt.MapFrom(src => src.Id.ToString()))
                  .ForMember(dest => dest.VehicleId, opt => opt.MapFrom(src => src.VehicleId.ToString()))
                  .ForMember(dest => dest.Description, opt => opt.MapFrom(src => src.Description))
@@ -78,13 +79,13 @@ namespace MaintenanceService.API.Mapping
                  .ReverseMap();
 
             // PartReplacement mappings
-            CreateMap<Domain.Models.PartReplacement, PartReplacement>()
+            CreateMap<Domain.Models.PartReplacement, Protos.PartReplacement>()
                 .ForMember(dest => dest.PartId, opt => opt.MapFrom(src => src.PartId))
                 .ForMember(dest => dest.PartName, opt => opt.MapFrom(src => src.PartName))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
                 .ForMember(dest => dest.Cost, opt => opt.MapFrom(src => src.Cost));
 
-            CreateMap<Domain.Models.PartReplacement, PartReplacement>()
+            CreateMap<Domain.Models.PartReplacement, Protos.PartReplacement>()
                 .ForMember(dest => dest.PartId, opt => opt.MapFrom(src => src.PartId))
                 .ForMember(dest => dest.PartName, opt => opt.MapFrom(src => src.PartName))
                 .ForMember(dest => dest.Quantity, opt => opt.MapFrom(src => src.Quantity))
