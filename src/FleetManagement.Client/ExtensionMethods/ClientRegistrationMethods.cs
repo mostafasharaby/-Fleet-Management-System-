@@ -14,6 +14,7 @@ namespace FleetManagement.Client.ExtensionMethods
                 string serviceUrl = "https://localhost:7206";
                 return new VehicleServiceClient(serviceUrl, logger);
             });
+
             services.AddSingleton<DriverServiceClient>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<DriverServiceClient>>();
@@ -29,10 +30,28 @@ namespace FleetManagement.Client.ExtensionMethods
                 return new RouteServiceClient(serviceUrl, logger, mapper);
             });
 
+            services.AddSingleton<MaintenanceServiceClient>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<MaintenanceServiceClient>>();
+                string serviceUrl = "https://localhost:7292";
+                var mapper = provider.GetRequiredService<IMapper>();
+                return new MaintenanceServiceClient(serviceUrl, logger, mapper);
+            });
+
+            services.AddSingleton<TelemetryServiceClient>(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<TelemetryServiceClient>>();
+                string serviceUrl = "https://localhost:7280";
+                var mapper = provider.GetRequiredService<IMapper>();
+                return new TelemetryServiceClient(serviceUrl, logger);
+            });
+
 
             services.AddHostedService<DriverWorker>();
             services.AddHostedService<VehicleWorker>();
             services.AddHostedService<RouteWorker>();
+            services.AddHostedService<MaintenanceWorker>();
+            services.AddHostedService<TelemetryWorker>();
 
             return services;
         }

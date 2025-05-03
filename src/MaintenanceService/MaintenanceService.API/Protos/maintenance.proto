@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option csharp_namespace = "MaintenanceService.API";
+option csharp_namespace = "MaintenanceService.API.Protos";
 
 package maintenance;
 
@@ -35,7 +35,7 @@ message MaintenanceTask {
   string vehicle_id = 2;
   string task_description = 3;
   MaintenanceType type = 4;
-  uint64 scheduled_date = 5; // Unix timestamp
+  int64 scheduled_date = 5; // Unix timestamp
   MaintenanceStatus status = 6;
   string assigned_technician_id = 7;
   int32 estimated_duration_minutes = 8;
@@ -68,7 +68,7 @@ message MaintenanceEvent {
   string vehicle_id = 2;
   string description = 3;
   MaintenanceType type = 4;
-  uint64 timestamp = 5; // Unix timestamp
+  int64 timestamp = 5; // Unix timestamp
   string performed_by = 6;
   double odometer_reading = 7;
   repeated PartReplacement parts_replaced = 8;
@@ -112,8 +112,8 @@ message UpdateMaintenanceStatusResponse {
 
 message GetMaintenanceHistoryRequest {
   string vehicle_id = 1;
-  uint64 start_date = 2; // Unix timestamp
-  uint64 end_date = 3; // Unix timestamp
+  int64 start_date = 2; // Unix timestamp
+  int64 end_date = 3; // Unix timestamp
   int32 page_size = 4;
   int32 page_number = 5;
 }
@@ -132,8 +132,8 @@ message VehicleHealthMetricsRequest {
 message VehicleHealthMetricsResponse {
   string vehicle_id = 1;
   double overall_health_score = 2;
-  uint64 last_maintenance_date = 3;
-  uint64 next_maintenance_due = 4;
+  int64 last_maintenance_date = 3;
+  int64 next_maintenance_due = 4;
   int32 maintenance_events_count = 5;
   repeated ComponentHealth component_health = 6;
 }

@@ -1,10 +1,11 @@
 ﻿using AutoMapper;
 using Grpc.Core;
+using MaintenanceService.API.Protos;
 using MaintenanceService.Application.Services;
 
 namespace MaintenanceService.API.Services
 {
-    public class GrpcMaintenanceService : MaintenanceService.MaintenanceServiceBase
+    public class GrpcMaintenanceService : Protos.MaintenanceService.MaintenanceServiceBase
     {
         private readonly IMaintenanceService _maintenanceService;
         private readonly IMapper _mapper;

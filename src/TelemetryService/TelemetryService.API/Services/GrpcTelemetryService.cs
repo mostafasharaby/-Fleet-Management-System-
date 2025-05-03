@@ -1,6 +1,4 @@
-﻿using AutoMapper;
-using Google.Protobuf.WellKnownTypes;
-using Grpc.Core;
+﻿using Grpc.Core;
 using TelemetryService.API.Protos;
 using TelemetryService.Application.DTOs;
 using TelemetryService.Application.Services;
@@ -12,18 +10,15 @@ namespace TelemetryService.API.Services
         private readonly ILogger<TelemetryGrpcService> _logger;
         private readonly ITelemetryService _telemetryService;
         private readonly IAlertThresholdService _alertThresholdService;
-        private readonly IMapper _mapper;
 
         public TelemetryGrpcService(
             ILogger<TelemetryGrpcService> logger,
             ITelemetryService telemetryService,
-            IAlertThresholdService alertThresholdService,
-            IMapper mapper)
+            IAlertThresholdService alertThresholdService)
         {
             _logger = logger;
             _telemetryService = telemetryService;
             _alertThresholdService = alertThresholdService;
-            _mapper = mapper;
         }
 
         public override async Task<TelemetryDataResponse> GetTelemetryDataById(
@@ -90,8 +85,8 @@ namespace TelemetryService.API.Services
             try
             {
                 var vehicleId = Guid.Parse(request.VehicleId);
-                var startTime = request.StartTime.ToDateTime();
-                var endTime = request.EndTime.ToDateTime();
+                var startTime = DateTimeOffset.FromUnixTimeSeconds(request.StartTime).DateTime;
+                var endTime = DateTimeOffset.FromUnixTimeSeconds(request.EndTime).DateTime;
 
                 if (startTime > endTime)
                 {
@@ -126,7 +121,7 @@ namespace TelemetryService.API.Services
                 var telemetryDataDto = new TelemetryDataDto
                 {
                     VehicleId = Guid.Parse(request.VehicleId),
-                    Timestamp = request.Timestamp.ToDateTime(),
+                    Timestamp = DateTimeOffset.FromUnixTimeSeconds(request.Timestamp).DateTime,
                     Latitude = request.Latitude,
                     Longitude = request.Longitude,
                     Speed = request.Speed,
@@ -165,7 +160,7 @@ namespace TelemetryService.API.Services
                 var telemetryDataList = request.TelemetryData.Select(r => new TelemetryDataDto
                 {
                     VehicleId = Guid.Parse(r.VehicleId),
-                    Timestamp = r.Timestamp.ToDateTime(),
+                    Timestamp = DateTimeOffset.FromUnixTimeSeconds(r.Timestamp).DateTime,
                     Latitude = r.Latitude,
                     Longitude = r.Longitude,
                     Speed = r.Speed,
@@ -442,7 +437,7 @@ namespace TelemetryService.API.Services
             {
                 Id = telemetryData.Id.ToString(),
                 VehicleId = telemetryData.VehicleId.ToString(),
-                Timestamp = Timestamp.FromDateTime(DateTime.SpecifyKind(telemetryData.Timestamp, DateTimeKind.Utc)),
+                Timestamp = new DateTimeOffset(telemetryData.Timestamp).ToUnixTimeSeconds(),
                 Latitude = telemetryData.Latitude,
                 Longitude = telemetryData.Longitude,
                 Speed = telemetryData.Speed,
@@ -494,6 +489,5 @@ namespace TelemetryService.API.Services
                 DiagnosticCode = random.Next(0, 50) == 0 ? $"P{random.Next(1000, 9999)}" : null // Occasional diagnostic code
             };
         }
-
     }
 }
