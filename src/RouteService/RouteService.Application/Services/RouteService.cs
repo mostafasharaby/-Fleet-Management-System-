@@ -7,7 +7,6 @@ using System.Data;
 
 namespace RouteService.Application.Services
 {
-
     public class RouteService : IRouteService
     {
         private readonly IRouteRepository _routeRepository;
@@ -15,11 +14,9 @@ namespace RouteService.Application.Services
         private readonly IRouteOptimizationService _routeOptimizationService;
         private readonly ILogger<RouteService> _logger;
 
-        public RouteService(
-            IRouteRepository routeRepository,
-            IRouteStopRepository stopRepository,
-            IRouteOptimizationService routeOptimizationService,
-            ILogger<RouteService> logger)
+        public RouteService(IRouteRepository routeRepository, IRouteStopRepository stopRepository,
+            IRouteOptimizationService routeOptimizationService, ILogger<RouteService> logger)
+
         {
             _routeRepository = routeRepository;
             _stopRepository = stopRepository;
@@ -31,6 +28,11 @@ namespace RouteService.Application.Services
         {
             _logger.LogInformation("Getting route with ID: {RouteId}", id);
             return await _routeRepository.GetByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Route>> GetRoutesByStatusAsync(string status)
+        {
+            return await _routeRepository.GetByStatusAsync(Enum.Parse<RouteStatus>(status));
         }
 
         public async Task<(IEnumerable<Route> Routes, int TotalCount, int PageCount)> ListRoutesAsync(

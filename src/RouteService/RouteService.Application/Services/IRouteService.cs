@@ -6,23 +6,13 @@ namespace RouteService.Application.Services
     public interface IRouteService
     {
         Task<Route> GetRouteAsync(Guid id);
-        Task<(IEnumerable<Route> Routes, int TotalCount, int PageCount)> ListRoutesAsync(
-            int pageSize, int pageNumber, string filter = null, RouteStatus? status = null);
+        Task<(IEnumerable<Route> Routes, int TotalCount, int PageCount)> ListRoutesAsync(int pageSize, int pageNumber, string filter = null, RouteStatus? status = null);
         Task<IEnumerable<Route>> GetRoutesByVehicleIdAsync(Guid vehicleId);
         Task<IEnumerable<Route>> GetRoutesByDriverIdAsync(Guid driverId);
+        Task<IEnumerable<Route>> GetRoutesByStatusAsync(string status);
         Task<IEnumerable<Route>> GetRoutesByDateRangeAsync(DateTime startDate, DateTime endDate);
-        Task<Route> CreateRouteAsync(
-            string name,
-            Guid vehicleId,
-            Guid driverId,
-            DateTime startTime,
-            List<RouteStop> stops);
-        Task<Route> UpdateRouteAsync(
-            Guid id,
-            string name,
-            Guid vehicleId,
-            Guid driverId,
-            DateTime startTime);
+        Task<Route> CreateRouteAsync(string name, Guid vehicleId, Guid driverId, DateTime startTime, List<RouteStop> stops);
+        Task<Route> UpdateRouteAsync(Guid id, string name, Guid vehicleId, Guid driverId, DateTime startTime);
         Task<Route> OptimizeRouteAsync(Guid id);
         Task<Route> StartRouteAsync(Guid id);
         Task<Route> CompleteRouteAsync(Guid id);
