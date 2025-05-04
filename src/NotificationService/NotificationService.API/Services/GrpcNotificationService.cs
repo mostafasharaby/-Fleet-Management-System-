@@ -1,7 +1,6 @@
 ﻿using Grpc.Core;
 using NotificationService.API.Protos;
 using NotificationService.Application.Interfaces;
-using NotificationService.Domain.Repositories;
 using System.Collections.Concurrent;
 
 namespace NotificationService.API.Services
@@ -13,12 +12,10 @@ namespace NotificationService.API.Services
         private readonly ConcurrentDictionary<string, ConcurrentDictionary<IServerStreamWriter<NotificationMessage>, NotificationSubscription>> _subscriptions =
             new ConcurrentDictionary<string, ConcurrentDictionary<IServerStreamWriter<NotificationMessage>, NotificationSubscription>>();
 
-        public NotificationGrpcService(
-            INotificationService notificationService,
-            ILogger<NotificationGrpcService> logger)
+        public NotificationGrpcService(INotificationService notificationService, ILogger<NotificationGrpcService> logger)
         {
-            _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService));
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _notificationService = notificationService;
+            _logger = logger;
         }
 
         public override async Task<SendNotificationResponse> SendNotification(SendNotificationRequest request, ServerCallContext context)
@@ -140,27 +137,14 @@ namespace NotificationService.API.Services
                     request.BodyTemplate,
                     defaultMetadata);
 
-                // We need to get the template repository from the application service
-                // This is a simplification - in a real implementation, we'd need to inject the repository
-                var templateRepository = context.GetHttpContext().RequestServices
-                    .GetService(typeof(INotificationTemplateRepository)) as INotificationTemplateRepository;
-
-                if (templateRepository == null)
-                {
-                    return new CreateTemplateResponse
-                    {
-                        Success = false,
-                        ErrorMessage = "Template repository not available"
-                    };
-                }
-
-                var result = await templateRepository.AddAsync(template);
-
+                var creationResponse = await _notificationService.CreateNotificationTemplate(template);
                 return new CreateTemplateResponse
                 {
-                    Success = true,
-                    TemplateId = result.Id
+                    Success = creationResponse.Success,
+                    TemplateId = creationResponse.TempleteId
                 };
+
+
             }
             catch (Exception ex)
             {

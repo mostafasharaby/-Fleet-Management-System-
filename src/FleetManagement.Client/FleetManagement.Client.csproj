@@ -24,6 +24,7 @@
 
 
 	<ItemGroup>
+    <ProjectReference Include="..\NotificationService\NotificationService.Domain\NotificationService.Domain.csproj" />
     <ProjectReference Include="..\RouteService\RouteService.Domain\RouteService.Domain.csproj" />
     <ProjectReference Include="..\TelemetryService\TelemetryService.API\TelemetryService.API.csproj" />
   </ItemGroup>
@@ -34,6 +35,9 @@
     </Protobuf>
     <Protobuf Include="..\MaintenanceService\MaintenanceService.API\Protos\maintenance.proto" GrpcServices="Client">
       <Link>Protos\maintenance.proto</Link>
+    </Protobuf>
+    <Protobuf Include="..\NotificationService\NotificationService.API\Protos\notification.proto" GrpcServices="Client">
+      <Link>Protos\notification.proto</Link>
     </Protobuf>
     <Protobuf Include="..\RouteService\RouteService.API\Protos\RouteService.proto" GrpcServices="Client">
       <Link>Protos\RouteService.proto</Link>

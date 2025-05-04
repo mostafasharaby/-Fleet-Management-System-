@@ -26,7 +26,7 @@ namespace FleetManagement.Client.Workers
                 //await SendTelemetryData();
                 //await SendBatchTelemetryData();
                 //await GetLatestTelemetryForAllVehicles();
-                await StreamVehicleTelemetry(stoppingToken);
+                //await StreamVehicleTelemetry(stoppingToken);
                 //await GetAlertThresholdsByVehicleId();
                 //await GetAlertThresholdById();
                 //await CreateAlertThreshold();
