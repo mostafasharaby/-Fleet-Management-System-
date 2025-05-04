@@ -12,4 +12,7 @@ namespace NotificationService.Application.DTOs
         public string BodyTemplate { get; set; }
         public Dictionary<string, string> DefaultMetadata { get; set; }
     }
+
+    public record NotificationCreationResponse(bool Success, string TempleteId, string ErrorMessage);
+
 }

@@ -4,18 +4,18 @@ namespace NotificationService.Domain.Models
 {
     public class NotificationTemplate
     {
-        public string Id { get; private set; }
-        public string Name { get; private set; }
-        public string Description { get; private set; }
-        public NotificationType Type { get; private set; }
-        public string TitleTemplate { get; private set; }
-        public string BodyTemplate { get; private set; }
-        public Dictionary<string, string> DefaultMetadata { get; private set; }
-        public DateTime CreatedAt { get; private set; }
-        public DateTime? UpdatedAt { get; private set; }
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public NotificationType Type { get; set; }
+        public string? TitleTemplate { get; set; }
+        public string? BodyTemplate { get; set; }
+        public Dictionary<string, string>? DefaultMetadata { get; set; }
+        public DateTime CreatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         // For EF Core
-        private NotificationTemplate() { }
+        public NotificationTemplate() { }
 
         public NotificationTemplate(
             string name,

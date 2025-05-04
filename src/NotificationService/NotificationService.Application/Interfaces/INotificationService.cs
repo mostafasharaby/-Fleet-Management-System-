@@ -1,5 +1,6 @@
 ﻿using NotificationService.Application.DTOs;
 using NotificationService.Domain.Enums;
+using NotificationService.Domain.Models;
 
 namespace NotificationService.Application.Interfaces
 {
@@ -39,6 +40,7 @@ namespace NotificationService.Application.Interfaces
 
         Task<NotificationDto> GetNotificationByIdAsync(string id);
 
+        Task<NotificationCreationResponse> CreateNotificationTemplate(NotificationTemplate notificationTemplate);
         Task<(IEnumerable<NotificationDto> Notifications, int TotalCount, int UnreadCount)> GetNotificationHistoryAsync(
             string recipientId,
             int page,

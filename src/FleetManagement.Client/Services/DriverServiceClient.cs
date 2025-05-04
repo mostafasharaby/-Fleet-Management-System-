@@ -12,7 +12,7 @@ namespace FleetManagement.Client.Services
 
         public DriverServiceClient(string serviceUrl, ILogger<DriverServiceClient> logger)
         {
-            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger = logger;
             _channel = GrpcChannel.ForAddress(serviceUrl);
             _client = new DriverService.API.Protos.DriverService.DriverServiceClient(_channel);
             _logger.LogInformation($"DriverServiceClient initialized with endpoint: {serviceUrl}");

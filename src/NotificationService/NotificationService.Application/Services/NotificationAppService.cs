@@ -20,10 +20,10 @@ namespace NotificationService.Application.Services
             ITemplateProcessor templateProcessor,
             NotificationChannelFactory channelFactory)
         {
-            _notificationRepository = notificationRepository ?? throw new ArgumentNullException(nameof(notificationRepository));
-            _templateRepository = templateRepository ?? throw new ArgumentNullException(nameof(templateRepository));
-            _templateProcessor = templateProcessor ?? throw new ArgumentNullException(nameof(templateProcessor));
-            _channelFactory = channelFactory ?? throw new ArgumentNullException(nameof(channelFactory));
+            _notificationRepository = notificationRepository;
+            _templateRepository = templateRepository;
+            _templateProcessor = templateProcessor;
+            _channelFactory = channelFactory;
         }
 
         public async Task<NotificationDto> SendNotificationAsync(
@@ -77,6 +77,23 @@ namespace NotificationService.Application.Services
             }
 
             return notifications;
+        }
+
+        public async Task<NotificationCreationResponse> CreateNotificationTemplate(NotificationTemplate notificationTemplate)
+        {
+            if (string.IsNullOrEmpty(notificationTemplate.Id))
+            {
+                notificationTemplate.Id = Guid.NewGuid().ToString();
+            }
+            var existingTemplate = await _templateRepository.GetByIdAsync(notificationTemplate.Id);
+            if (existingTemplate != null)
+            {
+                var responseFailure = new NotificationCreationResponse(false, notificationTemplate.Id, "Template with the same ID already exists");
+                return responseFailure;
+            }
+            var response = new NotificationCreationResponse(true, notificationTemplate.Id, null);
+            await _templateRepository.AddAsync(notificationTemplate);
+            return response;
         }
 
         public async Task<NotificationDto> SendTemplatedNotificationAsync(
@@ -188,5 +205,7 @@ namespace NotificationService.Application.Services
                 SentVia = notification.SentVia
             };
         }
+
+
     }
 }
