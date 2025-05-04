@@ -55,9 +55,10 @@ message LoginResponse {
   string message = 2;
   string user_name = 3;
   string token = 4;
-  google.protobuf.Timestamp token_expiry_time = 5;
-  string refresh_token = 6;
-  google.protobuf.Timestamp refresh_token_expiry_time = 7;
+  string user_id = 5;
+  google.protobuf.Timestamp token_expiry_time = 6;
+  string refresh_token = 7;
+  google.protobuf.Timestamp refresh_token_expiry_time = 8;
 }
 
 message RefreshTokenRequest {

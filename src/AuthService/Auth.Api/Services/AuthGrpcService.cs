@@ -35,7 +35,8 @@ namespace Auth.Api.Services
                 {
                     IsAuthenticated = result.IsAuthenticated ?? false,
                     Message = result.Message ?? "",
-                    UserName = result.UserName ?? ""
+                    UserName = result.UserName ?? "",
+                    UserId = result.UserId ?? "",
                 };
 
                 if (result.IsAuthenticated == true)
@@ -128,7 +129,7 @@ namespace Auth.Api.Services
             }
         }
 
-        [Authorize]
+        [Authorize(Roles = "user")]
         public override async Task<UserResponse> GetUser(GetUserRequest request, ServerCallContext context)
         {
             try
@@ -158,33 +159,33 @@ namespace Auth.Api.Services
             }
         }
 
-        //[Authorize(Roles = "Admin")]
-        //public override async Task<UsersResponse> GetAllUsers(Empty request, ServerCallContext context)
-        //{
-        //    try
-        //    {
-        //        var users = await _authService.GetAllUsersAsync();
-        //        var response = new UsersResponse();
+        [Authorize(Roles = "admin")]
+        public override async Task<UsersResponse> GetAllUsers(Empty request, ServerCallContext context)
+        {
+            try
+            {
+                var users = await _authService.GetAllUsersAsync();
+                var response = new UsersResponse();
 
-        //        foreach (var user in users)
-        //        {
-        //            response.Users.Add(new UserResponse
-        //            {
-        //                Id = user.Id ?? "",
-        //                UserName = user.UserName ?? "",
-        //                Email = user.Email ?? "",
-        //                PhoneNumber = user.PhoneNumber ?? ""
-        //            });
-        //        }
+                foreach (var user in users)
+                {
+                    response.Users.Add(new UserResponse
+                    {
+                        Id = user.Id ?? "",
+                        UserName = user.UserName ?? "",
+                        Email = user.Email ?? "",
+                        PhoneNumber = user.PhoneNumber ?? ""
+                    });
+                }
 
-        //        return response;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "Error during gRPC get all users call");
-        //        throw new RpcException(new Status(StatusCode.Internal, "An error occurred while retrieving users."));
-        //    }
-        //}
+                return response;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during gRPC get all users call");
+                throw new RpcException(new Status(StatusCode.Internal, "An error occurred while retrieving users."));
+            }
+        }
 
         //[Authorize(Roles = "Admin")]
         //public override async Task<DeleteUserResponse> DeleteUser(DeleteUserRequest request, ServerCallContext context)

@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
@@ -30,6 +30,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Protobuf Include="..\AuthService\Auth.Api\Protos\Auth.proto" GrpcServices="Client">
+      <Link>Protos\Auth.proto</Link>
+    </Protobuf>
     <Protobuf Include="..\DriverService\DriverService.API\Protos\DriverService.proto" GrpcServices="Client">
       <Link>Protos\DriverService.proto</Link>
     </Protobuf>

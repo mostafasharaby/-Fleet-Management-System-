@@ -16,7 +16,7 @@ namespace Auth.Application.Services
     {
         private readonly IConfiguration _configuration;
         private readonly UserManager<AppUser> _userManager;
-        //  private readonly AuthDbContext _context;                 // to follow DDD the App layer should not depend on Infrastruction layer so i make IUserRepo , IRefreshTokenRepo in Domain => :)
+        //  private readonly AuthDbContext _context;                 // to follow DDD the Application layer should not depend on Infrastruction layer so i make IUserRepo , IRefreshTokenRepo in Domain => :)
         private readonly IUserRepository _userRepository;
         private readonly IRefreshTokenRepository _refreshTokenRepository;
         public JwtService(IConfiguration configuration, UserManager<AppUser> userManager, IUserRepository userService, IRefreshTokenRepository refreshTokenRepository)
@@ -48,6 +48,7 @@ namespace Auth.Application.Services
                 RefreshToken = refreshToken,
                 RefreshTokenExpiryTime = refreshTokenExpiry,
                 UserName = user.UserName,
+                UserId = user.Id,
                 IsAuthenticated = true,
                 Message = "Authentication successful"
             };

@@ -11,5 +11,6 @@ namespace Auth.Application.Interfaces
         //Task RevokeTokenAsync(string token, string userId);
         //Task<bool> ValidateTokenAsync(string token);
         Task<AppUserDto> GetUserByIdAsync(string userId);
+        Task<List<AppUserDto>> GetAllUsersAsync();
     }
 }

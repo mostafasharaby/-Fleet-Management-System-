@@ -98,7 +98,7 @@ namespace Auth.Application.Services
                     return new AuthResponse
                     {
                         Message = "User not found!",
-                        IsAuthenticated = false
+                        IsAuthenticated = false,
                     };
                 }
 
@@ -115,6 +115,7 @@ namespace Auth.Application.Services
                 var tokenResponse = await _jwtService.GenerateJwtToken(user);
 
                 user.Token = tokenResponse.Token;
+                user.Id = tokenResponse.UserId!;
                 user.TokenExpiryTime = tokenResponse.TokenExpiryTime;
                 user.RefreshToken = tokenResponse.RefreshToken;
                 user.RefreshTokenExpiryTime = tokenResponse.RefreshTokenExpiryTime;

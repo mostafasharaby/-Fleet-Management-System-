@@ -73,6 +73,19 @@ namespace Auth.Infrastructure
                     ClockSkew = TimeSpan.Zero,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Secret"]!))
                 };
+                //  // This is important for gRPC to work with JWT
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Headers["Authorization"].ToString();
+                        if (!string.IsNullOrEmpty(accessToken) && accessToken.StartsWith("Bearer "))
+                        {
+                            context.Token = accessToken.Substring("Bearer ".Length).Trim();
+                        }
+                        return Task.CompletedTask;
+                    }
+                };
             })
             .AddCookie()
             .AddGoogle(options =>
@@ -81,7 +94,6 @@ namespace Auth.Infrastructure
                 options.ClientSecret = configuration["GoogleAuth:ClientSecret"]!;
             });
 
-            services.AddAuthorization();
             services.AddCors(options =>
             {
                 options.AddPolicy("MyPolicy", builder =>

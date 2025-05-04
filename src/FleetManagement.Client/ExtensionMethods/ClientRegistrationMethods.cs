@@ -53,6 +53,30 @@ namespace FleetManagement.Client.ExtensionMethods
                 return new NotificationServiceClient(serviceUrl, logger, mapper);
             });
 
+            services.AddSingleton(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<AuthServiceClient>>();
+                string serviceUrl = "https://localhost:7056";
+                var mapper = provider.GetRequiredService<IMapper>();
+                return new AuthServiceClient(serviceUrl, logger, mapper);
+            });
+
+            services.AddSingleton(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<ClaimsServiceClient>>();
+                string serviceUrl = "https://localhost:7056";
+                var mapper = provider.GetRequiredService<IMapper>();
+                return new ClaimsServiceClient(serviceUrl, logger, mapper);
+            });
+
+            services.AddSingleton(provider =>
+            {
+                var logger = provider.GetRequiredService<ILogger<RoleServiceClient>>();
+                string serviceUrl = "https://localhost:7056";
+                var mapper = provider.GetRequiredService<IMapper>();
+                return new RoleServiceClient(serviceUrl, logger, mapper);
+            });
+
 
             services.AddHostedService<DriverWorker>();
             services.AddHostedService<VehicleWorker>();
@@ -60,6 +84,7 @@ namespace FleetManagement.Client.ExtensionMethods
             services.AddHostedService<MaintenanceWorker>();
             services.AddHostedService<TelemetryWorker>();
             services.AddHostedService<NotificationWorker>();
+            services.AddHostedService<AuthWorker>();
 
             return services;
         }
