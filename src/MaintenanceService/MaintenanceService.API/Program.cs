@@ -14,10 +14,12 @@ builder.Services.AddMaintenancServiceApplication();
 builder.Services.AddControllers();
 var app = builder.Build();
 
+app.UseGrpcWeb();
+
 app.UseRouting();
 app.UseEndpoints(endpoint =>
 {
-    endpoint.MapGrpcService<GrpcMaintenanceService>();
+    endpoint.MapGrpcService<GrpcMaintenanceService>().EnableGrpcWeb();
     if (app.Environment.IsDevelopment())
     {
         endpoint.MapGrpcReflectionService();

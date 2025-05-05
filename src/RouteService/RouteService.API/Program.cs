@@ -15,11 +15,12 @@ builder.Services.AddControllers();
 
 var app = builder.Build();
 
+app.UseGrpcWeb();
 
 app.UseRouting();
 app.UseEndpoints(endpoint =>
 {
-    endpoint.MapGrpcService<GrpcRouteService>();
+    endpoint.MapGrpcService<GrpcRouteService>().EnableGrpcWeb();
     if (app.Environment.IsDevelopment())
     {
         endpoint.MapGrpcReflectionService();

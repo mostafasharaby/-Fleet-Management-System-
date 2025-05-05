@@ -19,12 +19,12 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-//app.MapGrpcService<GrpcVehicleService>();
+app.UseGrpcWeb();
 
 app.UseRouting(); // Matches request to an endpoint.
 app.UseEndpoints(endpoint =>  //Execute the matched endpoint.
 {
-    endpoint.MapGrpcService<GrpcVehicleService>();
+    endpoint.MapGrpcService<GrpcVehicleService>().EnableGrpcWeb();
     if (app.Environment.IsDevelopment())
     {
         endpoint.MapGrpcReflectionService();

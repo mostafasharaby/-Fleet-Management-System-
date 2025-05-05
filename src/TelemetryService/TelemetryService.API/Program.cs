@@ -13,12 +13,13 @@ builder.Services.AddTelemetryServiceInfrastructure(builder.Configuration);
 builder.Services.AddControllers();
 var app = builder.Build();
 
+app.UseGrpcWeb();
 
 app.UseRouting();
 
 app.UseEndpoints(endpoint =>
 {
-    endpoint.MapGrpcService<TelemetryGrpcService>();
+    endpoint.MapGrpcService<TelemetryGrpcService>().EnableGrpcWeb();
     if (app.Environment.IsDevelopment())
     {
         endpoint.MapGrpcReflectionService();

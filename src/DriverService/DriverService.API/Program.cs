@@ -15,11 +15,12 @@ builder.Services.AddDriverServiceApplication();
 builder.Services.AddControllers();
 var app = builder.Build();
 
+app.UseGrpcWeb();
 
 app.UseRouting();
 app.UseEndpoints(endpoint =>
 {
-    endpoint.MapGrpcService<GrpcDriverService>();
+    endpoint.MapGrpcService<GrpcDriverService>().EnableGrpcWeb();
     if (app.Environment.IsDevelopment())
     {
         endpoint.MapGrpcReflectionService();

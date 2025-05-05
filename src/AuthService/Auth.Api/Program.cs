@@ -5,7 +5,6 @@ using Auth.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGrpc();
-
 builder.Services.AddGrpcReflection();
 builder.Services.AddAuthInfrastructure(builder.Configuration);
 builder.Services.AddAuthApplication();
@@ -28,8 +27,10 @@ builder.Services.ConfigureApplicationCookie(options =>  // 	Configure cookies to
 
 builder.Services.AddControllers();
 var app = builder.Build();
-app.UseRouting();
 
+app.UseGrpcWeb();
+
+app.UseRouting();
 app.UseCors("MyPolicy");
 //app.MapGrpcService<AuthGrpcService>();
 //app.MapGrpcService<RoleGrpcService>();
