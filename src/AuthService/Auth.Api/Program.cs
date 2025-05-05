@@ -5,6 +5,7 @@ using Auth.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddGrpc();
+
 builder.Services.AddGrpcReflection();
 builder.Services.AddAuthInfrastructure(builder.Configuration);
 builder.Services.AddAuthApplication();

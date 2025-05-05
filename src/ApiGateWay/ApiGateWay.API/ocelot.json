@@ -1,0 +1,308 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "https://api.fleetmanagement.com",
+    "RequestIdKey": "X-Request-Id",
+    "ServiceDiscoveryProvider": {
+      "Host": "consul",
+      "Port": 8500,
+      "Type": "Consul"
+    },
+    "RateLimitOptions": {
+      "ClientIdHeader": "ClientId",
+      "QuotaExceededMessage": "API rate limit exceeded",
+      "HttpStatusCode": 429,
+      "DisableRateLimitHeaders": false
+    }
+  },
+  "Routes": [
+    // Vehicle Service Routes
+    {
+      "DownstreamPathTemplate": "/api/vehicles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vehicle-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/vehicles",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.vehicles.read", "fleet.vehicles.write" ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "vehiclelistregion"
+      },
+      "QoSOptions": {
+        "ExceptionsAllowedBeforeBreaking": 3,
+        "DurationOfBreak": 5000,
+        "TimeoutValue": 5000
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/vehicles/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vehicle-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/vehicles/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.vehicles.read", "fleet.vehicles.write" ]
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "vehicledetailregion"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/vehicles/{id}/location",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vehicle-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/vehicles/{id}/location",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.vehicles.read" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/vehicles/{id}/maintenance",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "vehicle-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/vehicles/{id}/maintenance",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.vehicles.read", "fleet.vehicles.write" ]
+      }
+    },
+
+    // Driver Service Routes
+    {
+      "DownstreamPathTemplate": "/api/drivers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "driver-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/drivers",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.drivers.read", "fleet.drivers.write" ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "driverlistregion"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/drivers/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "driver-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/drivers/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.drivers.read", "fleet.drivers.write" ]
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "driverdetailregion"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/drivers/{id}/assignments",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "driver-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/drivers/{id}/assignments",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.drivers.read" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/drivers/{id}/availability",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "driver-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/drivers/{id}/availability",
+      "UpstreamHttpMethod": [ "GET", "PUT" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.drivers.read", "fleet.drivers.write" ]
+      }
+    },
+
+    // Route Service Routes
+    {
+      "DownstreamPathTemplate": "/api/routes",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "route-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/routes",
+      "UpstreamHttpMethod": [ "GET", "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.routes.read", "fleet.routes.write" ]
+      },
+      "RateLimitOptions": {
+        "ClientWhitelist": [],
+        "EnableRateLimiting": true,
+        "Period": "1s",
+        "PeriodTimespan": 1,
+        "Limit": 10
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "routelistregion"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/routes/{id}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "route-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/routes/{id}",
+      "UpstreamHttpMethod": [ "GET", "PUT", "DELETE" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.routes.read", "fleet.routes.write" ]
+      },
+      "FileCacheOptions": {
+        "TtlSeconds": 15,
+        "Region": "routedetailregion"
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/routes/optimize",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "route-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/routes/optimize",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.routes.write" ]
+      }
+    },
+    {
+      "DownstreamPathTemplate": "/api/routes/{id}/eta",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "route-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/routes/{id}/eta",
+      "UpstreamHttpMethod": [ "GET" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.routes.read" ]
+      }
+    },
+
+    // Auth Service Routes
+    {
+      "DownstreamPathTemplate": "/api/auth/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/login",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/refresh",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/refresh",
+      "UpstreamHttpMethod": [ "POST" ]
+    },
+    {
+      "DownstreamPathTemplate": "/api/auth/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "auth-service",
+          "Port": 80
+        }
+      ],
+      "UpstreamPathTemplate": "/api/auth/register",
+      "UpstreamHttpMethod": [ "POST" ],
+      "AuthenticationOptions": {
+        "AuthenticationProviderKey": "Bearer",
+        "AllowedScopes": [ "fleet.users.write" ]
+      }
+    }
+  ]
+}
